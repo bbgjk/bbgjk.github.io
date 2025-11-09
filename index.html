@@ -3,403 +3,694 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>我的插件 - 增强版</title>
+    <title>你好世界 | Minecraft Java版服务器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --primary-color: #667eea;
-            --secondary-color: #764ba2;
-            --accent-color: #ffd700;
-            --text-color: white;
-            --card-bg: rgba(255, 255, 255, 0.1);
-            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        }
-        
         * {
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             margin: 0;
-            padding: 20px;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            color: var(--text-color);
-            min-height: 100vh;
-            line-height: 1.6;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            padding: 30px;
-            border-radius: 15px;
-            backdrop-filter: blur(10px);
-            box-shadow: var(--shadow);
+
+        :root {
+            --mc-green: #5b8c3c;
+            --mc-dark-green: #46692f;
+            --mc-brown: #8d6e4a;
+            --mc-dark-brown: #6d5539;
+            --mc-dirt: #9c7c5e;
+            --mc-stone: #9d9d9d;
+            --mc-grass: #78a355;
+            --mc-water: #3a71ae;
+            --mc-sky: #7ec0ee;
         }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        
-        .subtitle {
-            text-align: center;
-            margin-bottom: 30px;
-            opacity: 0.8;
-        }
-        
-        .info-section {
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            border-left: 3px solid var(--accent-color);
-        }
-        
-        .info-section h3 {
-            margin-top: 0;
-            color: var(--accent-color);
-            display: flex;
-            align-items: center;
-        }
-        
-        .info-section h3 i {
-            margin-right: 10px;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        
-        .info-item {
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 5px;
-        }
-        
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            margin-left: 10px;
-            font-size: 0.8em;
-        }
-        
-        .status-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            margin-right: 5px;
-        }
-        
-        .active {
-            background-color: #4CAF50;
-        }
-        
-        .inactive {
-            background-color: #f44336;
-        }
-        
-        .buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            flex-wrap: wrap;
-        }
-        
-        button {
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        button:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: translateY(-2px);
-        }
-        
-        button i {
-            margin-right: 5px;
-        }
-        
-        .primary-btn {
-            background: var(--accent-color);
+
+        body {
+            background: linear-gradient(to bottom, var(--mc-sky), #d0e8f2);
             color: #333;
-            font-weight: bold;
+            line-height: 1.6;
+            overflow-x: hidden;
+            position: relative;
+            min-height: 100vh;
         }
-        
-        .primary-btn:hover {
-            background: #ffed4e;
+
+        /* 像素化背景 */
+        .pixel-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            z-index: -1;
         }
-        
-        .time-display {
-            text-align: center;
-            font-size: 1.2em;
-            margin: 20px 0;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
+
+        /* 方块装饰元素 */
+        .mc-block {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background-size: cover;
+            z-index: -1;
+            opacity: 0.7;
         }
-        
-        .hidden {
-            display: none;
+
+        .grass-block {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%2378a355"/><rect width="40" height="10" y="30" fill="%239c7c5e"/></svg>');
         }
-        
-        .settings-panel {
-            margin-top: 20px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
+
+        .dirt-block {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239c7c5e"/></svg>');
         }
-        
-        .setting-item {
-            margin: 10px 0;
+
+        .stone-block {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239d9d9d"/></svg>');
+        }
+
+        /* 导航栏 */
+        header {
+            background-color: var(--mc-dark-brown);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            border-bottom: 4px solid var(--mc-brown);
+        }
+
+        .navbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
         }
-        
-        .toggle {
-            position: relative;
-            display: inline-block;
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo img {
             width: 50px;
-            height: 24px;
+            height: 50px;
         }
-        
-        .toggle input {
-            opacity: 0;
-            width: 0;
-            height: 0;
+
+        .logo h1 {
+            color: white;
+            font-size: 1.8rem;
+            text-shadow: 2px 2px 0 #000;
+            letter-spacing: 1px;
         }
-        
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc;
-            transition: .4s;
-            border-radius: 24px;
+
+        .nav-links {
+            display: flex;
+            gap: 25px;
         }
-        
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 16px;
-            width: 16px;
-            left: 4px;
-            bottom: 4px;
-            background-color: white;
-            transition: .4s;
-            border-radius: 50%;
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 5px;
+            transition: all 0.3s;
         }
-        
-        input:checked + .slider {
-            background-color: var(--accent-color);
+
+        .nav-links a:hover {
+            background-color: var(--mc-brown);
+            transform: translateY(-2px);
         }
-        
-        input:checked + .slider:before {
-            transform: translateX(26px);
+
+        /* 英雄区域 */
+        .hero {
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 2rem;
+            position: relative;
+            overflow: hidden;
         }
-        
-        @media (max-width: 768px) {
-            .container {
-                padding: 15px;
-            }
-            
-            h1 {
-                font-size: 2em;
-            }
-            
-            .info-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .buttons {
-                flex-direction: column;
-            }
+
+        .hero-content {
+            max-width: 800px;
+            z-index: 2;
         }
-        
-        /* 图标样式 */
-        .icon {
+
+        .hero h2 {
+            font-size: 3.5rem;
+            color: white;
+            text-shadow: 3px 3px 0 #000;
+            margin-bottom: 1rem;
+            letter-spacing: 2px;
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            color: white;
+            text-shadow: 2px 2px 0 #000;
+            margin-bottom: 2rem;
+        }
+
+        .server-address {
+            background-color: rgba(0,0,0,0.7);
+            padding: 15px 30px;
+            border-radius: 10px;
             display: inline-block;
-            width: 1em;
-            height: 1em;
-            margin-right: 0.5em;
-            background-color: currentColor;
-            mask-size: cover;
+            border: 3px solid var(--mc-green);
+            box-shadow: 0 0 15px rgba(92, 184, 92, 0.7);
         }
-        
-        .icon-info {
-            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>');
+
+        .server-address h3 {
+            color: white;
+            font-size: 2.5rem;
+            margin: 0;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
         }
-        
-        .icon-cog {
-            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58c.18-.14.23-.41.12-.61l-1.92-3.32c-.12-.22-.37-.29-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54c-.04-.24-.24-.41-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58c-.18.14-.23.41-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z"/></svg>');
+
+        .server-address span {
+            color: var(--mc-green);
+            font-weight: bold;
         }
-        
-        .icon-power {
-            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>');
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--mc-green);
+            color: white;
+            padding: 15px 40px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-decoration: none;
+            border-radius: 8px;
+            margin-top: 30px;
+            border: 3px solid var(--mc-dark-green);
+            box-shadow: 0 5px 0 var(--mc-dark-green);
+            transition: all 0.2s;
         }
-        
-        .icon-refresh {
-            mask: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>');
+
+        .cta-button:hover {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 var(--mc-dark-green);
+            background-color: var(--mc-dark-green);
+        }
+
+        /* 特色区域 */
+        .features {
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 80px 2rem;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 60px;
+            color: var(--mc-dark-brown);
+            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            border-top: 5px solid var(--mc-green);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .feature-icon {
+            background-color: var(--mc-green);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+        }
+
+        .feature-content {
+            padding: 25px;
+        }
+
+        .feature-content h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: var(--mc-dark-green);
+        }
+
+        .feature-content p {
+            color: #555;
+        }
+
+        /* 服务器信息 */
+        .server-info {
+            padding: 80px 2rem;
+            background: linear-gradient(to bottom, var(--mc-brown), var(--mc-dark-brown));
+            color: white;
+            text-align: center;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 50px auto 0;
+        }
+
+        .info-item {
+            background: rgba(0,0,0,0.3);
+            padding: 30px;
+            border-radius: 10px;
+            border: 2px solid var(--mc-dirt);
+        }
+
+        .info-item i {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: var(--mc-green);
+        }
+
+        .info-item h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+
+        .info-item p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* 规则区域 */
+        .rules {
+            padding: 80px 2rem;
+            background-color: rgba(255, 255, 255, 0.9);
+        }
+
+        .rules-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-left: 8px solid var(--mc-green);
+        }
+
+        .rules-list {
+            list-style-type: none;
+        }
+
+        .rules-list li {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            border-left: 4px solid var(--mc-brown);
+            display: flex;
+            align-items: center;
+        }
+
+        .rules-list li i {
+            margin-right: 15px;
+            color: var(--mc-green);
+            font-size: 1.2rem;
+        }
+
+        /* 加入方式 */
+        .join-section {
+            padding: 80px 2rem;
+            background: linear-gradient(135deg, var(--mc-sky), var(--mc-water));
+            text-align: center;
+            color: white;
+        }
+
+        .join-steps {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 40px;
+            max-width: 1000px;
+            margin: 50px auto 0;
+        }
+
+        .step {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 10px;
+            padding: 30px;
+            width: 250px;
+            border: 2px solid rgba(255,255,255,0.3);
+        }
+
+        .step-number {
+            background: white;
+            color: var(--mc-water);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 0 auto 20px;
+        }
+
+        .step h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* 页脚 */
+        footer {
+            background-color: var(--mc-dark-brown);
+            color: white;
+            padding: 40px 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .social-links a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: var(--mc-brown);
+            color: white;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px);
+            background: var(--mc-green);
+        }
+
+        .copyright {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.2);
+            opacity: 0.8;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .hero h2 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .server-address h3 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero h2 {
+                font-size: 2rem;
+            }
+            
+            .server-address h3 {
+                font-size: 1.5rem;
+            }
+            
+            .step {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>我的插件</h1>
-        <div class="subtitle">版本 1.0.1 | 状态: <span class="status-indicator"><span class="status-dot active"></span> 运行中</span></div>
-        
-        <div class="time-display" id="currentTime">正在加载时间...</div>
-        
-        <div class="info-section">
-            <h3><i class="icon icon-info"></i> 插件信息</h3>
-            <div class="info-grid">
-                <div class="info-item">
-                    <strong>名称:</strong> 我的插件
+    <!-- 像素背景 -->
+    <div class="pixel-bg"></div>
+    
+    <!-- 动态方块元素 -->
+    <div class="mc-block grass-block" style="top: 10%; left: 5%;"></div>
+    <div class="mc-block dirt-block" style="top: 15%; left: 15%;"></div>
+    <div class="mc-block stone-block" style="top: 20%; right: 10%;"></div>
+    <div class="mc-block grass-block" style="bottom: 25%; left: 8%;"></div>
+    <div class="mc-block dirt-block" style="bottom: 15%; right: 12%;"></div>
+    <div class="mc-block stone-block" style="bottom: 30%; right: 20%;"></div>
+
+    <!-- 导航栏 -->
+    <header>
+        <div class="navbar">
+            <div class="logo">
+                <i class="fas fa-cubes fa-2x" style="color: var(--mc-green);"></i>
+                <h1>矿工世界</h1>
+            </div>
+            <nav class="nav-links">
+                <a href="#features"><i class="fas fa-star"></i> 服务器特色</a>
+                <a href="#info"><i class="fas fa-server"></i> 服务器信息</a>
+                <a href="#rules"><i class="fas fa-book"></i> 服务器规则</a>
+                <a href="#join"><i class="fas fa-plug"></i> 加入我们</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="hero-content">
+            <h2>欢迎来到矿工世界</h2>
+            <p>一个充满创意与冒险的Minecraft Java版服务器</p>
+            <div class="server-address">
+                <h3>服务器地址: <span>mineserver.site</span></h3>
+            </div>
+            <a href="#join" class="cta-button">立即加入 <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </section>
+
+    <!-- 特色区域 -->
+    <section class="features" id="features">
+        <h2 class="section-title">服务器特色</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-users"></i>
                 </div>
-                <div class="info-item">
-                    <strong>版本:</strong> 1.0.1
-                </div>
-                <div class="info-item">
-                    <strong>作者:</strong> 你好
-                </div>
-                <div class="info-item">
-                    <strong>发布日期:</strong> 2023-10-15
+                <div class="feature-content">
+                    <h3>友好社区</h3>
+                    <p>加入我们活跃而友好的玩家社区，共同建设、探索和冒险。定期举办社区活动和建筑比赛。</p>
                 </div>
             </div>
-            <p><strong>描述:</strong> 嗯，没错，就是这样，只是测试用的。这个插件提供了一些基本功能，帮助您更好地管理您的应用。</p>
-        </div>
-        
-        <div class="info-section">
-            <h3><i class="icon icon-cog"></i> 开发说明</h3>
-            <p>这是一个示例插件页面。您可以在此目录下创建自己的HTML、CSS和JavaScript文件来构建插件界面。</p>
-            <p><strong>插件目录:</strong> <code>/data/plugins/my/</code></p>
-            <p><strong>技术栈:</strong> HTML5, CSS3, JavaScript</p>
-        </div>
-        
-        <div class="buttons">
-            <button class="primary-btn" id="togglePlugin">
-                <i class="icon icon-power"></i> 禁用插件
-            </button>
-            <button id="refreshBtn">
-                <i class="icon icon-refresh"></i> 刷新状态
-            </button>
-            <button id="settingsBtn">
-                <i class="icon icon-cog"></i> 插件设置
-            </button>
-        </div>
-        
-        <div class="settings-panel hidden" id="settingsPanel">
-            <h3>插件设置</h3>
-            <div class="setting-item">
-                <span>自动更新</span>
-                <label class="toggle">
-                    <input type="checkbox" checked>
-                    <span class="slider"></span>
-                </label>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>强力反作弊</h3>
+                    <p>采用先进的反作弊系统，确保公平游戏环境，杜绝外挂和作弊行为。</p>
+                </div>
             </div>
-            <div class="setting-item">
-                <span>启用日志</span>
-                <label class="toggle">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                </label>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-sync-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>定期更新</h3>
+                    <p>服务器持续更新，添加新内容和功能，保持游戏新鲜感和可玩性。</p>
+                </div>
             </div>
-            <div class="setting-item">
-                <span>暗色模式</span>
-                <label class="toggle">
-                    <input type="checkbox">
-                    <span class="slider"></span>
-                </label>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-home"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>领地保护</h3>
+                    <p>完善的领地保护系统，保护你的建筑和物品安全，防止他人破坏。</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-dragon"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>丰富玩法</h3>
+                    <p>多种游戏模式：生存、创造、小游戏等，满足不同玩家的需求。</p>
+                </div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <i class="fas fa-tachometer-alt"></i>
+                </div>
+                <div class="feature-content">
+                    <h3>高性能服务器</h3>
+                    <p>使用高性能硬件，保证服务器流畅运行，拒绝卡顿和延迟。</p>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
+
+    <!-- 服务器信息 -->
+    <section class="server-info" id="info">
+        <h2 class="section-title">服务器信息</h2>
+        <div class="info-grid">
+            <div class="info-item">
+                <i class="fas fa-microchip"></i>
+                <h3>服务器版本</h3>
+                <p>Java版 1.20.1</p>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-plug"></i>
+                <h3>在线状态</h3>
+                <p>24/7 全天候运行</p>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-user-friends"></i>
+                <h3>在线玩家</h3>
+                <p>50人同时在线</p>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-map"></i>
+                <h3>世界大小</h3>
+                <p>无限地图边界</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 规则区域 -->
+    <section class="rules" id="rules">
+        <h2 class="section-title">服务器规则</h2>
+        <div class="rules-container">
+            <ul class="rules-list">
+                <li><i class="fas fa-ban"></i> 禁止使用任何形式的外挂、作弊模组或利用游戏漏洞</li>
+                <li><i class="fas fa-comment-slash"></i> 禁止在聊天频道发布广告、刷屏或不当言论</li>
+                <li><i class="fas fa-gavel"></i> 禁止恶意破坏他人建筑或财产</li>
+                <li><i class="fas fa-user-secret"></i> 禁止冒充管理员或其他玩家</li>
+                <li><i class="fas fa-exchange-alt"></i> 禁止进行现实货币交易</li>
+                <li><i class="fas fa-heart"></i> 尊重其他玩家，保持友好交流氛围</li>
+                <li><i class="fas fa-exclamation-triangle"></i> 发现BUG请及时向管理员报告</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 加入方式 -->
+    <section class="join-section" id="join">
+        <h2 class="section-title">如何加入我们</h2>
+        <div class="join-steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>启动游戏</h3>
+                <p>确保你的Minecraft Java版已更新至1.20.1</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>添加服务器</h3>
+                <p>在多人游戏中点击"添加服务器"</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>输入地址</h3>
+                <p>在服务器地址栏输入: <strong>mineserver.site</strong></p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>开始游戏</h3>
+                <p>保存并加入服务器，开始你的冒险！</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer>
+        <div class="footer-content">
+            <div class="server-address">
+                <h3>服务器地址: <span>mineserver.site</span></h3>
+            </div>
+            <div class="social-links">
+                <a href="#"><i class="fab fa-discord"></i></a>
+                <a href="#"><i class="fab fa-qq"></i></a>
+                <a href="#"><i class="fab fa-weixin"></i></a>
+                <a href="#"><i class="fab fa-youtube"></i></a>
+            </div>
+            <div class="copyright">
+                <p>© 2025 矿工世界 Minecraft服务器 | 本服务器与Mojang AB没有关联</p>
+            </div>
+        </div>
+    </footer>
 
     <script>
-        // 更新时间显示
-        function updateTime() {
-            const now = new Date();
-            const options = { 
-                year: 'numeric', 
-                month: 'long', 
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-                weekday: 'long'
-            };
-            document.getElementById('currentTime').textContent = now.toLocaleDateString('zh-CN', options);
-        }
-        
-        // 初始化时间并设置定时器
-        updateTime();
-        setInterval(updateTime, 1000);
-        
-        // 插件状态切换
-        document.getElementById('togglePlugin').addEventListener('click', function() {
-            const statusDot = document.querySelector('.status-dot');
-            const statusText = document.querySelector('.status-indicator span:last-child');
-            const button = this;
+        // 添加方块动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const blocks = document.querySelectorAll('.mc-block');
             
-            if (statusDot.classList.contains('active')) {
-                statusDot.classList.remove('active');
-                statusDot.classList.add('inactive');
-                statusText.textContent = '已禁用';
-                button.innerHTML = '<i class="icon icon-power"></i> 启用插件';
-                button.classList.remove('primary-btn');
-            } else {
-                statusDot.classList.remove('inactive');
-                statusDot.classList.add('active');
-                statusText.textContent = '运行中';
-                button.innerHTML = '<i class="icon icon-power"></i> 禁用插件';
-                button.classList.add('primary-btn');
-            }
-        });
-        
-        // 刷新按钮
-        document.getElementById('refreshBtn').addEventListener('click', function() {
-            this.innerHTML = '<i class="icon icon-refresh"></i> 刷新中...';
-            setTimeout(() => {
-                this.innerHTML = '<i class="icon icon-refresh"></i> 刷新状态';
-                alert('插件状态已刷新！');
-            }, 1000);
-        });
-        
-        // 设置面板切换
-        document.getElementById('settingsBtn').addEventListener('click', function() {
-            const panel = document.getElementById('settingsPanel');
-            panel.classList.toggle('hidden');
+            blocks.forEach(block => {
+                // 随机动画延迟
+                const delay = Math.random() * 5;
+                block.style.animation = `float 3s ${delay}s infinite ease-in-out`;
+                
+                // 创建CSS动画
+                const style = document.createElement('style');
+                style.textContent = `
+                    @keyframes float {
+                        0%, 100% { transform: translateY(0) rotate(0deg); }
+                        50% { transform: translateY(-20px) rotate(5deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            });
             
-            if (!panel.classList.contains('hidden')) {
-                this.innerHTML = '<i class="icon icon-cog"></i> 隐藏设置';
-            } else {
-                this.innerHTML = '<i class="icon icon-cog"></i> 插件设置';
-            }
-        });
-        
-        // 设置项变更提示
-        document.querySelectorAll('.toggle input').forEach(toggle => {
-            toggle.addEventListener('change', function() {
-                const settingName = this.closest('.setting-item').querySelector('span').textContent;
-                const action = this.checked ? '启用' : '禁用';
-                console.log(`${action}了 ${settingName}`);
+            // 添加导航栏滚动效果
+            window.addEventListener('scroll', function() {
+                const header = document.querySelector('header');
+                if (window.scrollY > 100) {
+                    header.style.backgroundColor = 'rgba(70, 50, 31, 0.95)';
+                    header.style.padding = '0.5rem 2rem';
+                } else {
+                    header.style.backgroundColor = '';
+                    header.style.padding = '';
+                }
             });
         });
     </script>
