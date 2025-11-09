@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>你好世界 | Minecraft Java版服务器</title>
+    <title>你好的世界 | Minecraft Java版服务器</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -23,6 +23,9 @@
             --mc-grass: #78a355;
             --mc-water: #3a71ae;
             --mc-sky: #7ec0ee;
+            --mc-accent: #ffcc5c; /* 新增：金色强调色 */
+            --shadow: 0 4px 12px rgba(0,0,0,0.2);
+            --transition: all 0.3s ease;
         }
 
         body {
@@ -34,7 +37,7 @@
             min-height: 100vh;
         }
 
-        /* 像素化背景 */
+        /* 像素化背景 - 增强视觉效果 */
         .pixel-bg {
             position: fixed;
             top: 0;
@@ -42,13 +45,14 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(0,0,0,0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.1) 1px, transparent 1px);
+                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
             background-size: 20px 20px;
             z-index: -1;
+            opacity: 0.7;
         }
 
-        /* 方块装饰元素 */
+        /* 方块装饰元素 - 增加更多种类 */
         .mc-block {
             position: absolute;
             width: 40px;
@@ -56,29 +60,39 @@
             background-size: cover;
             z-index: -1;
             opacity: 0.7;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
         }
 
         .grass-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%2378a355"/><rect width="40" height="10" y="30" fill="%239c7c5e"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%2378a355"/><rect width="40" height="10" y="30" fill="%239c7c5e"/><rect x="5" y="0" width="10" height="5" fill="%235b8c3c"/><rect x="25" y="5" width="10" height="5" fill="%235b8c3c"/></svg>');
         }
 
         .dirt-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239c7c5e"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239c7c5e"/><rect x="5" y="5" width="10" height="10" fill="%238d6e4a"/><rect x="25" y="25" width="10" height="10" fill="%238d6e4a"/></svg>');
         }
 
         .stone-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239d9d9d"/></svg>');
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239d9d9d"/><rect x="5" y="5" width="10" height="10" fill="%238a8a8a"/><rect x="25" y="25" width="10" height="10" fill="%238a8a8a"/></svg>');
         }
 
-        /* 导航栏 */
+        .wood-block {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%23c19a6b"/><rect x="0" y="15" width="40" height="10" fill="%238b4513" opacity="0.3"/></svg>');
+        }
+
+        .glass-block {
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%23add8e6" opacity="0.5"/><line x1="0" y1="0" x2="40" y2="40" stroke="white" stroke-width="1" opacity="0.3"/><line x1="40" y1="0" x2="0" y2="40" stroke="white" stroke-width="1" opacity="0.3"/></svg>');
+        }
+
+        /* 导航栏 - 增强深度感 */
         header {
             background-color: var(--mc-dark-brown);
             padding: 1rem 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: var(--shadow);
             border-bottom: 4px solid var(--mc-brown);
+            transition: var(--transition);
         }
 
         .navbar {
@@ -93,11 +107,13 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            transition: var(--transition);
         }
 
         .logo img {
             width: 50px;
             height: 50px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
         }
 
         .logo h1 {
@@ -105,6 +121,7 @@
             font-size: 1.8rem;
             text-shadow: 2px 2px 0 #000;
             letter-spacing: 1px;
+            font-family: 'Minecraft', sans-serif;
         }
 
         .nav-links {
@@ -119,7 +136,19 @@
             font-size: 1.1rem;
             padding: 8px 15px;
             border-radius: 5px;
-            transition: all 0.3s;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--mc-accent);
+            transition: var(--transition);
         }
 
         .nav-links a:hover {
@@ -127,7 +156,11 @@
             transform: translateY(-2px);
         }
 
-        /* 英雄区域 */
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 英雄区域 - 增强视觉冲击力 */
         .hero {
             height: 80vh;
             display: flex;
@@ -140,17 +173,41 @@
             overflow: hidden;
         }
 
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 70%);
+            z-index: 1;
+        }
+
         .hero-content {
             max-width: 800px;
             z-index: 2;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .hero h2 {
             font-size: 3.5rem;
             color: white;
-            text-shadow: 3px 3px 0 #000;
+            text-shadow: 3px 3px 0 #000, 0 0 10px rgba(255,204,92,0.3);
             margin-bottom: 1rem;
             letter-spacing: 2px;
+            font-family: 'Minecraft', sans-serif;
         }
 
         .hero p {
@@ -167,6 +224,13 @@
             display: inline-block;
             border: 3px solid var(--mc-green);
             box-shadow: 0 0 15px rgba(92, 184, 92, 0.7);
+            transition: var(--transition);
+            margin-bottom: 20px;
+        }
+
+        .server-address:hover {
+            transform: scale(1.03);
+            box-shadow: 0 0 25px rgba(92, 184, 92, 0.9);
         }
 
         .server-address h3 {
@@ -180,6 +244,32 @@
         .server-address span {
             color: var(--mc-green);
             font-weight: bold;
+            text-shadow: 0 0 5px rgba(92, 184, 92, 0.8);
+        }
+
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+            background: rgba(0,0,0,0.5);
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
         }
 
         .cta-button {
@@ -191,22 +281,40 @@
             font-weight: bold;
             text-decoration: none;
             border-radius: 8px;
-            margin-top: 30px;
+            margin-top: 10px;
             border: 3px solid var(--mc-dark-green);
-            box-shadow: 0 5px 0 var(--mc-dark-green);
-            transition: all 0.2s;
+            box-shadow: 0 5px 0 var(--mc-dark-green), 0 0 15px rgba(0,0,0,0.2);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
         }
 
         .cta-button:hover {
             transform: translateY(3px);
-            box-shadow: 0 2px 0 var(--mc-dark-green);
+            box-shadow: 0 2px 0 var(--mc-dark-green), 0 0 20px rgba(0,0,0,0.3);
             background-color: var(--mc-dark-green);
         }
 
-        /* 特色区域 */
+        .cta-button:hover::before {
+            left: 100%;
+        }
+
+        /* 特色区域 - 增强卡片质感 */
         .features {
             background-color: rgba(255, 255, 255, 0.85);
             padding: 80px 2rem;
+            position: relative;
         }
 
         .section-title {
@@ -215,6 +323,21 @@
             margin-bottom: 60px;
             color: var(--mc-dark-brown);
             text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+            font-family: 'Minecraft', sans-serif;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60%;
+            height: 4px;
+            background-color: var(--mc-accent);
+            margin: 15px auto 0;
+            border-radius: 2px;
         }
 
         .features-grid {
@@ -230,12 +353,30 @@
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
+            transition: var(--transition);
             border-top: 5px solid var(--mc-green);
+            position: relative;
         }
 
         .feature-card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, var(--mc-green), var(--mc-accent));
+            opacity: 0;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
         }
 
         .feature-icon {
@@ -246,6 +387,12 @@
             justify-content: center;
             font-size: 2.5rem;
             color: white;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            background-color: var(--mc-dark-green);
+            transform: scale(1.05);
         }
 
         .feature-content {
@@ -262,12 +409,26 @@
             color: #555;
         }
 
-        /* 服务器信息 */
+        /* 服务器信息 - 增强数据展示 */
         .server-info {
             padding: 80px 2rem;
             background: linear-gradient(to bottom, var(--mc-brown), var(--mc-dark-brown));
             color: white;
             text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .server-info::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></svg>');
+            background-size: 40px 40px;
+            z-index: 0;
         }
 
         .info-grid {
@@ -276,6 +437,8 @@
             gap: 30px;
             max-width: 1000px;
             margin: 50px auto 0;
+            position: relative;
+            z-index: 1;
         }
 
         .info-item {
@@ -283,12 +446,25 @@
             padding: 30px;
             border-radius: 10px;
             border: 2px solid var(--mc-dirt);
+            transition: var(--transition);
+        }
+
+        .info-item:hover {
+            transform: translateY(-8px);
+            background: rgba(0,0,0,0.4);
+            border-color: var(--mc-accent);
         }
 
         .info-item i {
             font-size: 3rem;
             margin-bottom: 20px;
             color: var(--mc-green);
+            transition: var(--transition);
+        }
+
+        .info-item:hover i {
+            color: var(--mc-accent);
+            transform: scale(1.1);
         }
 
         .info-item h3 {
@@ -301,7 +477,7 @@
             opacity: 0.9;
         }
 
-        /* 规则区域 */
+        /* 规则区域 - 增强可读性 */
         .rules {
             padding: 80px 2rem;
             background-color: rgba(255, 255, 255, 0.9);
@@ -315,10 +491,26 @@
             border-radius: 10px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             border-left: 8px solid var(--mc-green);
+            position: relative;
+        }
+
+        .rules-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%235b8c3c" opacity="0.1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>');
+            background-repeat: no-repeat;
+            background-position: center;
+            z-index: 0;
         }
 
         .rules-list {
             list-style-type: none;
+            position: relative;
+            z-index: 1;
         }
 
         .rules-list li {
@@ -329,6 +521,13 @@
             border-left: 4px solid var(--mc-brown);
             display: flex;
             align-items: center;
+            transition: var(--transition);
+        }
+
+        .rules-list li:hover {
+            background: #f0f0f0;
+            transform: translateX(5px);
+            border-left-color: var(--mc-green);
         }
 
         .rules-list li i {
@@ -337,12 +536,25 @@
             font-size: 1.2rem;
         }
 
-        /* 加入方式 */
+        /* 加入方式 - 增强步骤感 */
         .join-section {
             padding: 80px 2rem;
             background: linear-gradient(135deg, var(--mc-sky), var(--mc-water));
             text-align: center;
             color: white;
+            position: relative;
+        }
+
+        .join-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="2" fill="rgba(255,255,255,0.3)"/></svg>');
+            background-size: 60px 60px;
+            z-index: 0;
         }
 
         .join-steps {
@@ -352,6 +564,22 @@
             gap: 40px;
             max-width: 1000px;
             margin: 50px auto 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 连接线 - 仅在桌面显示 */
+        @media (min-width: 992px) {
+            .join-steps::before {
+                content: '';
+                position: absolute;
+                top: 25px;
+                left: 125px;
+                right: 125px;
+                height: 4px;
+                background-color: rgba(255,255,255,0.5);
+                z-index: -1;
+            }
         }
 
         .step {
@@ -361,6 +589,13 @@
             padding: 30px;
             width: 250px;
             border: 2px solid rgba(255,255,255,0.3);
+            transition: var(--transition);
+        }
+
+        .step:hover {
+            transform: translateY(-10px) scale(1.05);
+            background: rgba(255, 255, 255, 0.25);
+            border-color: white;
         }
 
         .step-number {
@@ -375,6 +610,14 @@
             font-size: 1.8rem;
             font-weight: bold;
             margin: 0 auto 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            transition: var(--transition);
+        }
+
+        .step:hover .step-number {
+            background-color: var(--mc-accent);
+            color: var(--mc-dark-brown);
+            transform: rotate(10deg);
         }
 
         .step h3 {
@@ -382,17 +625,46 @@
             margin-bottom: 15px;
         }
 
-        /* 页脚 */
+        /* 页脚 - 增强信息层级 */
         footer {
             background-color: var(--mc-dark-brown);
             color: white;
-            padding: 40px 2rem;
+            padding: 60px 2rem 30px;
             text-align: center;
+            position: relative;
+        }
+
+        footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 8px;
+            background: linear-gradient(90deg, var(--mc-green), var(--mc-accent), var(--mc-water));
         }
 
         .footer-content {
             max-width: 1200px;
             margin: 0 auto;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--mc-accent);
         }
 
         .social-links {
@@ -412,22 +684,26 @@
             color: white;
             border-radius: 50%;
             font-size: 1.5rem;
-            transition: all 0.3s;
+            transition: var(--transition);
+            border: 2px solid transparent;
         }
 
         .social-links a:hover {
-            transform: translateY(-5px);
-            background: var(--mc-green);
+            transform: translateY(-5px) rotate(10deg);
+            background: transparent;
+            border-color: var(--mc-accent);
+            color: var(--mc-accent);
         }
 
         .copyright {
-            margin-top: 20px;
+            margin-top: 40px;
             padding-top: 20px;
             border-top: 1px solid rgba(255,255,255,0.2);
             opacity: 0.8;
+            font-size: 0.9rem;
         }
 
-        /* 响应式设计 */
+        /* 响应式设计优化 */
         @media (max-width: 768px) {
             .navbar {
                 flex-direction: column;
@@ -454,6 +730,10 @@
                 flex-wrap: wrap;
                 justify-content: center;
             }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
         }
 
         @media (max-width: 480px) {
@@ -468,6 +748,10 @@
             .step {
                 width: 100%;
             }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
@@ -475,13 +759,15 @@
     <!-- 像素背景 -->
     <div class="pixel-bg"></div>
     
-    <!-- 动态方块元素 -->
+    <!-- 动态方块元素 - 增加更多种类和位置 -->
     <div class="mc-block grass-block" style="top: 10%; left: 5%;"></div>
     <div class="mc-block dirt-block" style="top: 15%; left: 15%;"></div>
     <div class="mc-block stone-block" style="top: 20%; right: 10%;"></div>
     <div class="mc-block grass-block" style="bottom: 25%; left: 8%;"></div>
     <div class="mc-block dirt-block" style="bottom: 15%; right: 12%;"></div>
     <div class="mc-block stone-block" style="bottom: 30%; right: 20%;"></div>
+    <div class="mc-block wood-block" style="top: 40%; left: 5%;"></div>
+    <div class="mc-block glass-block" style="bottom: 50%; right: 5%;"></div>
 
     <!-- 导航栏 -->
     <header>
@@ -495,6 +781,10 @@
                 <a href="#info"><i class="fas fa-server"></i> 服务器信息</a>
                 <a href="#rules"><i class="fas fa-book"></i> 服务器规则</a>
                 <a href="#join"><i class="fas fa-plug"></i> 加入我们</a>
+                <!-- 导航栏中的 GitHub 链接 -->
+                <a href="https://github.com/yourusername/yourrepository" target="_blank" rel="noopener noreferrer">
+                    <i class="fab fa-github"></i> GitHub
+                </a>
             </nav>
         </div>
     </header>
@@ -504,6 +794,10 @@
         <div class="hero-content">
             <h2>欢迎来到你好的世界</h2>
             <p>一个充满创意与冒险的Minecraft Java版服务器</p>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>服务器在线 - 58名玩家正在游戏中</span>
+            </div>
             <div class="server-address">
                 <h3>服务器地址: <span>mineserver.site</span></h3>
             </div>
@@ -589,7 +883,7 @@
             <div class="info-item">
                 <i class="fas fa-user-friends"></i>
                 <h3>在线玩家</h3>
-                <p>114514人同时在线</p>
+                <p>50人同时在线</p>
             </div>
             <div class="info-item">
                 <i class="fas fa-map"></i>
@@ -648,14 +942,24 @@
             <div class="server-address">
                 <h3>服务器地址: <span>mineserver.site</span></h3>
             </div>
+            <div class="footer-links">
+                <a href="#features">服务器特色</a>
+                <a href="#info">服务器信息</a>
+                <a href="#rules">服务器规则</a>
+                <a href="#join">加入我们</a>
+                <!-- 页脚中的 GitHub 链接 -->
+                <a href="https://github.com/bbgjk/bbgjk.github.io" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
+            </div>
             <div class="social-links">
+                <!-- 社交图标中的 GitHub 链接 -->
+                <a href="https://github.com/bbgjk/bbgjk.github.io" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
                 <a href="#"><i class="fab fa-discord"></i></a>
                 <a href="#"><i class="fab fa-qq"></i></a>
                 <a href="#"><i class="fab fa-weixin"></i></a>
                 <a href="#"><i class="fab fa-youtube"></i></a>
             </div>
             <div class="copyright">
-                <p>© 2025 你好的世界 Minecraft服务器 | 本服务器与Mojang AB没有关联</p>
+                <p>© 2025 矿工世界 Minecraft服务器 | 本服务器与Mojang AB没有关联</p>
             </div>
         </div>
     </footer>
@@ -666,22 +970,27 @@
             const blocks = document.querySelectorAll('.mc-block');
             
             blocks.forEach(block => {
-                // 随机动画延迟
+                // 随机动画延迟和持续时间
                 const delay = Math.random() * 5;
-                block.style.animation = `float 3s ${delay}s infinite ease-in-out`;
+                const duration = 3 + Math.random() * 2;
+                block.style.animation = `float ${duration}s ${delay}s infinite ease-in-out`;
                 
-                // 创建CSS动画
-                const style = document.createElement('style');
-                style.textContent = `
-                    @keyframes float {
-                        0%, 100% { transform: translateY(0) rotate(0deg); }
-                        50% { transform: translateY(-20px) rotate(5deg); }
-                    }
-                `;
-                document.head.appendChild(style);
+                // 随机动画开始位置
+                const startY = Math.random() * 10 - 5;
+                block.style.transform = `translateY(${startY}px)`;
             });
             
-            // 添加导航栏滚动效果
+            // 创建CSS动画
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes float {
+                    0%, 100% { transform: translateY(0) rotate(0deg); }
+                    50% { transform: translateY(-20px) rotate(5deg); }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            // 导航栏滚动效果
             window.addEventListener('scroll', function() {
                 const header = document.querySelector('header');
                 if (window.scrollY > 100) {
@@ -691,6 +1000,16 @@
                     header.style.backgroundColor = '';
                     header.style.padding = '';
                 }
+            });
+
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                });
             });
         });
     </script>
