@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>致谢 | 我的小站</title>
+  <style>
+    :root { --primary:#4f46e5; --bg:#f9fafb; --text:#111827; --muted:#6b7280; }
+    body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text);line-height:1.75;position: relative;min-height: 100vh;padding-bottom: 80px;}
+    header{text-align:center;padding:4rem 1rem 3rem;}
+    header h1{margin:0 0 .5rem;font-size:clamp(2rem,5vw,3rem);cursor: pointer;}
+    header p{margin:0;color:var(--muted);font-size:1.125rem;}
+    main{max-width:48rem;margin:0 auto;padding:0 1rem 4rem;}
+    .card{background:#fff;border-radius:1rem;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);padding:2rem;margin-bottom:2rem;}
+    .card h2{margin-top:0;font-size:1.5rem;color:var(--primary);}
+    .card p{margin:.5rem 0 1rem;}
+    .thanks-list{list-style:none;padding:0;margin:0;}
+    .thanks-list li{display:flex;align-items:center;margin:.75rem 0;}
+    .thanks-list li::before{content:"🙏";margin-right:.75rem;}
+    .footer{text-align:center;font-size:.875rem;color:var(--muted);padding:2rem 1rem;position: fixed;bottom: 0;width: 100%;background: var(--bg);}
+    .heart{color:#e11d48;animation:pulse 1.6s infinite;}
+    @keyframes pulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+    @media (prefers-reduced-motion: reduce){.heart{animation:none;}}
+    
+    /* 音乐控制按钮样式 */
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #F2B233;
+      border: none;
+      color: #3C3C3C;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .music-control:hover {
+      transform: scale(1.1);
+    }
+    /* 彩蛋提示样式 */
+    .easter-egg-tip {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 998;
+    }
+    .easter-egg-tip.show {
+      opacity: 1;
+    }
+    /* 标题弹跳动画 */
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    /* 移动端适配 */
+    @media(max-width:600px){
+      .music-control {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 音乐功能模块 -->
+  <div class="easter-egg-tip" id="eggTip">点击标题有彩蛋哦 🎉</div>
+  <button class="music-control" id="musicBtn" onclick="toggleMusic()">🔇</button>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://mineserver.site/music/yidiandian.mp3" type="audio/mp3">
+  </audio>
+
+  <header>
+    <h1 id="titleEgg">感谢一路相伴</h1>
+    <p>因为有你们，这个小站得以诞生并持续运行</p>
+  </header>
+  <main>
+    <section class="card">
+      <h2>特别鸣谢</h2>
+      <ul class="thanks-list">
+        <li><strong>腾讯元宝</strong> — 灵感与效率的加速器</li>
+        <li><strong>XAMPP</strong> — 让本地开发如此简单</li>
+        <li><strong>樱花内网穿透（Sakura Frp）</strong> — 把本地服务带到公网</li>
+        <li><strong>每一位访客与贡献者</strong> — 你们的点赞与反馈是最好的动力</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>技术栈与致谢说明</h2>
+      <p>站点基于 <strong>Apache + PHP（XAMPP）</strong> 快速搭建，借助 <strong>樱花内网穿透</strong> 将本地的 <strong>HTTP 80</strong> 端口映射为公网可访问地址；页面使用简洁的 <strong>HTML/CSS</strong> 与少量动画，适配移动端与桌面端。</p>
+      <p>樱花内网穿透的使用通常包含：注册账号、创建 <strong>TCP/HTTP 隧道</strong>、在本机启动客户端并填入<strong>访问密钥</strong>、在日志中获取公网地址与端口；若映射 HTTP 服务，请确保本地服务已在对应端口运行并允许外网访问。</p>
+    </section>
+
+    <section class="card">
+      <h2>友情链接</h2>
+      <p><a href="https://www.natfrp.com/" target="_blank" rel="noopener">Sakura Frp 樱花内网穿透</a> | <a href="https://www.apachefriends.org/" target="_blank" rel="noopener">XAMPP</a></p>
+    </section>
+  </main>
+  <footer class="footer">
+    <p>Made with <span class="heart">❤️</span> by <strong>你</strong> | 用 <strong>腾讯元宝</strong> 生成初稿，用 <strong>樱花内网穿透</strong> 分享给世界</p>
+  </footer>
+
+  <script>
+    // 音乐功能核心逻辑
+    let musicPlaying = false; // 初始未播放
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    const eggTip = document.getElementById('eggTip');
+    const titleEgg = document.getElementById('titleEgg');
+    let eggClickCount = 0;
+
+    // 音乐播放/暂停切换
+    function toggleMusic() {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicBtn.innerHTML = '🔇';
+        musicPlaying = false;
+      } else {
+        bgMusic.play().then(() => {
+          musicBtn.innerHTML = '🎵';
+          musicPlaying = true;
+        }).catch(err => {
+          console.log('音频播放失败:', err);
+          eggTip.textContent = '需要手动交互播放音乐哦 🎶';
+          eggTip.classList.add('show');
+          setTimeout(() => eggTip.classList.remove('show'), 3000);
+          musicPlaying = false;
+          musicBtn.innerHTML = '🔇';
+        });
+      }
+    }
+
+    // 音频状态兜底同步
+    bgMusic.addEventListener('play', () => {
+      musicPlaying = true;
+      musicBtn.innerHTML = '🎵';
+    });
+    bgMusic.addEventListener('pause', () => {
+      musicPlaying = false;
+      musicBtn.innerHTML = '🔇';
+    });
+
+    // 标题彩蛋交互（适配致谢页主题）
+    titleEgg.addEventListener('click', () => {
+      eggClickCount++;
+      // 标题弹跳动画
+      titleEgg.style.animation = 'bounce 0.5s ease';
+      setTimeout(() => titleEgg.style.animation = '', 500);
+      
+      // 不同点击次数的彩蛋提示
+      if (eggClickCount === 5) {
+        eggTip.textContent = '恭喜发现彩蛋！🎁 樱花FRP海外节点无需备案哦～';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 5000);
+        eggClickCount = 0; // 重置计数
+      } else if (eggClickCount === 1) {
+        eggTip.textContent = '继续点击有惊喜 🎮';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 2000);
+      }
+    });
+
+    // 页面加载后显示初始彩蛋提示
+    window.addEventListener('load',()=>{
+      setTimeout(() => {
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 3000);
+      }, 1000);
+    });
+  </script>
+</body>
+</html>

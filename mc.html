@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的世界服务器 mineserver.site</title>
+  <meta name="description" content="Java Paper 1.20.1，双路 E5-2630 v4，20 核 40 线程，自动备份，防 DDoS 节点，稳定低延迟，最多 118 人在线。" />
+  <style>
+    :root { 
+      --mc-green:#55AA55; 
+      --mc-dark:#2C2C2C; 
+      --mc-bg:#EDE4D3; 
+      --mc-text:#3C3C3C;
+      --mc-accent:#F2B233;
+    }
+    /* 背景层 */
+    .bg-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://img-baofun.zhhainiao.com/fs/7649e2dbc7044ee71743022dd2d51701.jpg') center/cover no-repeat;
+      opacity: 1;
+      z-index: -1;
+    }
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Microsoft YaHei",sans-serif;
+      background:var(--mc-bg);
+      color:var(--mc-text);
+      position: relative;
+      min-height: 100vh;
+    }
+    header{
+      background:var(--mc-dark);
+      color:#fff;
+      text-align:center;
+      padding:2rem 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    header h1{
+      margin:0;
+      font-size:2.5rem;
+      letter-spacing:-.5px;
+      position: relative;
+      display: inline-block;
+    }
+    header h1.clicked {
+      animation: bounce 0.5s ease;
+      color: var(--mc-accent);
+    }
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    header p{
+      margin:.5rem 0 0;
+      opacity:.85;
+    }
+    main{
+      max-width:900px;
+      margin:0 auto;
+      padding:2rem 1rem;
+      background: rgba(255,255,255,0.85);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    section{
+      margin-bottom:2.5rem;
+    }
+    h2{
+      color:var(--mc-dark);
+      border-left:4px solid var(--mc-green);
+      padding-left:.75rem;
+      margin-top:0;
+    }
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      margin-top:1rem;
+    }
+    .badge{
+      background:#fff;
+      border:2px solid var(--mc-green);
+      border-radius:6px;
+      padding:.6rem 1rem;
+      font-weight:600;
+      box-shadow:0 2px 4px rgba(0,0,0,.05);
+      transition: transform 0.2s ease;
+    }
+    .badge:hover {
+      transform: translateY(-3px);
+    }
+    .badge code{
+      background:var(--mc-bg);
+      padding:.2rem .4rem;border-radius:3px;font-size:.9em;
+    }
+    .copy{
+      display:inline-block;
+      margin-top:.5rem;
+      background:var(--mc-green);
+      color:#fff;
+      border:none;
+      padding:.6rem 1.2rem;
+      border-radius:4px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.2s;
+    }
+    .copy:hover{background:#449944;}
+    .copy:active{transform:scale(.98);}
+    .copy::after{content:" 已复制";margin-left:.5rem;opacity:0;transition:.2s;}
+    .copy.copied::after{opacity:1;}
+    .join{text-align:center;margin-top:2rem;}
+    .join-btn{
+      background:var(--mc-accent);
+      color:#3C3C3C;
+      border:none;
+      padding:1rem 2rem;
+      border-radius:6px;
+      font-size:1.25rem;
+      font-weight:700;
+      text-decoration:none;
+      display:inline-block;
+      box-shadow:0 4px 8px rgba(0,0,0,.1);
+      transition:.2s;
+      margin:0.5rem;
+    }
+    .join-btn:hover{
+      background:#E1A020;
+      transform: translateY(-2px);
+    }
+    footer{
+      text-align:center;
+      padding:1.5rem 1rem;
+      font-size:.9rem;
+      color:#666;
+      background: var(--mc-dark);
+      color: #fff;
+      margin-top: 2rem;
+    }
+    .faq details{
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:6px;
+      margin-bottom:.75rem;
+      padding:.75rem 1rem;
+      cursor:pointer;
+      transition: background 0.2s ease;
+    }
+    .faq details:hover {
+      background: #f9f9f9;
+    }
+    .faq summary{font-weight:600;outline:none;}
+    .faq p{margin:.5rem 0 0;}
+    .stats{
+      display:flex;
+      gap:1.5rem;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 1rem;
+    }
+    .stat{text-align:center;}
+    .stat .num{
+      font-size:1.75rem;
+      font-weight:700;
+      color:var(--mc-green);
+    }
+    .stat .label{font-size:.9rem;opacity:.8;}
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--mc-accent);
+      border: none;
+      color: #3C3C3C;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .music-control:hover {
+      transform: scale(1.1);
+    }
+    .easter-egg-tip {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 998;
+    }
+    .easter-egg-tip.show {
+      opacity: 1;
+    }
+    @media(max-width:600px){
+      header h1{font-size:2rem;} 
+      .badges{flex-direction:column;}
+      .music-control {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-layer"></div>
+  <div class="easter-egg-tip" id="eggTip">点击标题有彩蛋哦 🎉</div>
+  <button class="music-control" id="musicBtn" onclick="toggleMusic()">🔇</button>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://mineserver.site/music/yidiandian.mp3" type="audio/mp3">
+  </audio>
+
+  <header>
+    <h1 id="titleEgg">我的世界服务器</h1>
+    <p>地址：<strong id="server-addr">mineserver.site</strong> <button class="copy" onclick="copyAddr()">复制</button></p>
+  </header>
+  <main>
+    <section>
+      <h2>服务器亮点</h2>
+      <div class="badges">
+        <div class="badge">Java <strong>Paper 1.20.1</strong></div>
+        <div class="badge">双路 <strong>E5-2630 v4</strong> · <strong>20 核 40 线程</strong></div>
+        <div class="badge">自动备份</div>
+        <div class="badge">防 <strong>DDoS</strong> 节点</div>
+        <div class="badge">延迟低至 <strong>&lt; 80ms</strong>（视地区）</div>
+        <div class="badge">最大 <strong>118</strong> 人在线</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>快速加入</h2>
+      <p>Java 版客户端：直接输入服务器地址 <strong>mineserver.site</strong> 即可连接。</p>
+      <p>基岩版兼容：支持通过 <strong>GeyserMC</strong> 连接（如启用）。</p>
+      <div class="join">
+        <a class="join-btn" href="https://mineserver.site/server.html" onclick="trackJoin()">服务器详细配置</a>
+        <a class="join-btn" href="https://mineserver.site/thanks.html" onclick="trackJoin()">致谢</a>
+        <a class="join-btn" href="https://mineserver.site/developer.html" onclick="trackJoin()">友情链接</a>
+      </div>
+    </section>
+
+    <section>
+      <h2>实时状态</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="num" id="online-count">--</div>
+          <div class="label">当前在线</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="version">1.20.1</div>
+          <div class="label">游戏版本</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="tps">19-20</div>
+          <div class="label">TPS</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="ping">79ms</div>
+          <div class="label">延迟</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="faq">
+      <h2>常见问题</h2>
+      <details>
+        <summary>支持哪些版本与客户端？</summary>
+        <p>服务端为 <strong>Java Paper 1.20.1</strong>，推荐使用官方 Java 版客户端。如服务器启用 <strong>GeyserMC</strong>，基岩版也可连接。</p>
+      </details>
+      <details>
+        <summary>最大在线人数与性能如何？</summary>
+        <p>服务器配置为 <strong>双路 E5-2630 v4（20 核 40 线程）</strong>，优化后稳定承载，官方标注最大 <strong>118</strong> 人在线。</p>
+      </details>
+      <details>
+        <summary>是否有备份与安全措施？</summary>
+        <p>已启用定期<strong>自动备份</strong>，并接入<strong>防 DDoS 节点</strong>，尽力保障稳定与安全。</p>
+      </details>
+      <details>
+        <summary>延迟大概多少？</summary>
+        <p>多数地区可稳定在 <strong>&lt; 80ms</strong>，具体取决于你的本地网络与运营商。</p>
+      </details>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 mineserver.site — 稳定运行 · 用心服务</p>
+  </footer>
+
+  <script>
+    // ===== 全局变量与函数（复制、音乐、彩蛋、标题）=====
+    let musicPlaying = false;
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    const titleEgg = document.getElementById('titleEgg');
+    const eggTip = document.getElementById('eggTip');
+    let eggClickCount = 0;
+
+    function copyAddr(){
+      const addr = document.getElementById('server-addr').textContent;
+      const btn = document.querySelector('.copy');
+      navigator.clipboard.writeText(addr).then(()=>{
+        btn.classList.add('copied');
+        setTimeout(()=>btn.classList.remove('copied'),1500);
+      }).catch(err => {
+        const input = document.createElement('input');
+        input.value = addr;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        btn.classList.add('copied');
+        setTimeout(()=>btn.classList.remove('copied'),1500);
+      });
+    }
+
+    function trackJoin(){ console.log('[Join] Clicked'); }
+
+    function toggleMusic() {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicBtn.innerHTML = '🔇';
+        musicPlaying = false;
+      } else {
+        bgMusic.play().then(() => {
+          musicBtn.innerHTML = '🎵';
+          musicPlaying = true;
+        }).catch(err => {
+          console.log('音频播放失败:', err);
+          eggTip.textContent = '需要手动交互播放音乐哦 🎶';
+          eggTip.classList.add('show');
+          setTimeout(() => eggTip.classList.remove('show'), 3000);
+          musicPlaying = false;
+          musicBtn.innerHTML = '🔇';
+        });
+      }
+    }
+    bgMusic.addEventListener('play', () => { musicPlaying = true; musicBtn.innerHTML = '🎵'; });
+    bgMusic.addEventListener('pause', () => { musicPlaying = false; musicBtn.innerHTML = '🔇'; });
+
+    function titleEggClick() {
+      eggClickCount++;
+      titleEgg.classList.add('clicked');
+      setTimeout(() => titleEgg.classList.remove('clicked'), 500);
+      if (eggClickCount === 5) {
+        eggTip.textContent = '恭喜发现彩蛋！🎁 服务器专属福利：输入指令 /gift 领取';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 5000);
+        eggClickCount = 0;
+      } else if (eggClickCount === 1) {
+        eggTip.textContent = '继续点击有惊喜 🎮';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 2000);
+      }
+    }
+    titleEgg.addEventListener('click', titleEggClick);
+    setTimeout(() => {
+      eggTip.classList.add('show');
+      setTimeout(() => eggTip.classList.remove('show'), 3000);
+    }, 1000);
+
+    // ===== 服务器状态显示（核心修复部分）=====
+    // 🧩 你可以切换 useMockData 为 true/false 来测试「真实接口」或「模拟数据」
+    const useMockData = false; // 👈 改为 false 如果你有真实后端且解决了跨域
+
+    const onlineEl = document.getElementById('online-count');
+    const versionEl = document.getElementById('version');
+    const pingEl = document.getElementById('ping');
+    const tpsEl = document.getElementById('tps');
+
+    function setOffline() {
+      onlineEl.textContent = '离线';
+      pingEl.textContent = '超时';
+      versionEl.textContent = '--';
+      tpsEl.textContent = '--';
+    }
+
+    async function loadStatus() {
+      if (useMockData) {
+        // 🟢 模拟数据：用于预览和测试，无需后端
+        const mock = {
+          players: { online: Math.floor(Math.random() * 50) },
+          version: { name: 'Paper 1.20.1' },
+          roundTripLatency: Math.floor(Math.random() * 50) + 1
+        };
+        onlineEl.textContent = mock.players.online;
+        versionEl.textContent = mock.version.name;
+        pingEl.textContent = mock.roundTripLatency + ' ms';
+        tpsEl.textContent = '--';
+      } else {
+        // 🔴 真实接口：需后端支持 & 解决跨域
+        const API = 'http://localhost:3000/minecraft-status'; // 你的后端地址
+        try {
+          const res = await fetch(API, { cache: 'no-store' });
+          if (!res.ok) throw new Error('接口异常');
+          const data = await res.json();
+          if (data.online) {
+            onlineEl.textContent = data.players.online;
+            versionEl.textContent = data.version?.name || '--';
+            pingEl.textContent = (data.roundTripLatency != null ? data.roundTripLatency + ' ms' : '--');
+            tpsEl.textContent = '--';
+          } else {
+            setOffline();
+          }
+        } catch (err) {
+          console.error('获取服务器状态失败:', err);
+          setOffline();
+        }
+      }
+    }
+
+    // 页面加载后初始化
+    window.addEventListener('load', () => {
+      // 彩蛋
+      titleEgg.addEventListener('click', titleEggClick);
+      setTimeout(() => {
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 3000);
+      }, 1000);
+
+      // 状态
+      loadStatus();
+      setInterval(loadStatus, 10000); // 每 10 秒刷新
+    });
+  </script>
+</body>
+</html>

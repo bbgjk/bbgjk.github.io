@@ -1,0 +1,313 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PowerEdge R730 双路 E5-2630 v4 服务器</title>
+  <meta name="description" content="戴尔 PowerEdge R730 2U 机架式服务器，双路 Intel Xeon E5-2630 v4，63GB DDR4，企业级虚拟化、数据库与存储。" />
+  <style>
+    :root{--dell-blue:#007DB8;--dell-dark:#2C2C2C;--dell-light:#F2F2F2;--dell-accent:#55AA55;}
+    body{margin:0;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Microsoft YaHei",sans-serif;background:var(--dell-light);color:#333;position: relative;min-height: 100vh;padding-bottom: 80px;}
+    header{background:var(--dell-dark);color:#fff;text-align:center;padding:2rem 1rem;}
+    header h1{margin:0;font-size:2.2rem;letter-spacing:-.5px;}
+    header p{margin:.5rem 0 0;opacity:.85;}
+    main{max-width:960px;margin:0 auto;padding:2rem 1rem;}
+    section{margin-bottom:2.5rem;}
+    h2{color:var(--dell-blue);border-left:4px solid var(--dell-accent);padding-left:.75rem;margin-top:0;}
+    .badges{display:flex;flex-wrap:wrap;gap:1rem;margin-top:1rem;}
+    .badge{background:#fff;border:1px solid #ddd;border-radius:6px;padding:.6rem 1rem;font-weight:600;box-shadow:0 2px 4px rgba(0,0,0,.05);}
+    .specs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1rem;}
+    .spec-card{background:#fff;border-radius:6px;padding:1rem;border:1px solid #e5e5e5;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+    .spec-card h3{margin:0 0 .5rem;font-size:1.1rem;color:var(--dell-dark);}
+    .spec-card ul{margin:0;padding-left:1.2rem;font-size:.95rem;line-height:1.6;}
+    .copy{display:inline-block;margin-top:.5rem;background:var(--dell-blue);color:#fff;border:none;padding:.6rem 1.2rem;border-radius:4px;cursor:pointer;font-weight:600;transition:.2s;}
+    .copy:hover{background:#005f87;}
+    .copy::after{content:" 已复制";margin-left:.5rem;opacity:0;transition:.2s;}
+    .copy.copied::after{opacity:1;}
+    footer{text-align:center;padding:1.5rem 1rem;font-size:.9rem;color:#666;position: fixed;bottom: 0;width: 100%;background: var(--dell-light);}
+    @media(max-width:600px){header h1{font-size:1.8rem;} .badges{flex-direction:column;}}
+    
+    /* 视频容器样式 */
+    .video-container {
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,.1);
+    }
+    .server-video {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+    .video-tip {
+      text-align: center;
+      margin: .5rem 0 1.5rem;
+      color: var(--dell-dark);
+      font-size: .95rem;
+    }
+
+    /* 音乐控制按钮样式 */
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #F2B233;
+      border: none;
+      color: #3C3C3C;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .music-control:hover {
+      transform: scale(1.1);
+    }
+    /* 彩蛋提示样式 */
+    .easter-egg-tip {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 998;
+    }
+    .easter-egg-tip.show {
+      opacity: 1;
+    }
+    /* 移动端适配 */
+    @media(max-width:600px){
+      .music-control {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- 音乐功能模块 -->
+  <div class="easter-egg-tip" id="eggTip">点击标题有彩蛋哦 🎉</div>
+  <button class="music-control" id="musicBtn" onclick="toggleMusic()">🔇</button>
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://mineserver.site/music/yidiandian.mp3" type="audio/mp3">
+  </audio>
+
+  <header>
+    <h1 id="titleEgg">PowerEdge R730</h1>
+    <p><strong>双路 Intel Xeon E5-2630 v4</strong> · <strong>63GB DDR4</strong> · 企业级 <strong>2U</strong> 机架服务器</p>
+  </header>
+  <main>
+    <!-- 新增视频区域 -->
+    <section>
+      <h2>服务器演示视频</h2>
+      <div class="video-container">
+        <video class="server-video" id="serverVideo" controls poster="">
+          <source src="https://mineserver.site/video/vid.mp4" type="video/mp4">
+          你的浏览器不支持HTML5视频播放，请升级浏览器。
+        </video>
+      </div>
+      <p class="video-tip">🎬 点击播放查看 PowerEdge R730 服务器实操演示 | 视频支持倍速/全屏播放</p>
+    </section>
+
+    <section>
+      <h2>核心亮点</h2>
+      <div class="badges">
+        <div class="badge">2U 机架式，企业级可靠性</div>
+        <div class="badge">双路 <strong>E5-2630 v4</strong> · 20 核 40 线程/CPU</div>
+        <div class="badge"><strong>63GB DDR4</strong> 大内存，多任务更从容</div>
+        <div class="badge">最多 <strong>24 个</strong> DIMM 插槽，支持大容量扩展</div>
+        <div class="badge">最多 <strong>7 个</strong> PCIe 扩展槽，灵活适配</div>
+        <div class="badge">热插拔冗余电源与风扇，保障稳定运行</div>
+      </div>
+    </section>
+
+    <section>
+      <h2>关键规格</h2>
+      <div class="specs">
+        <div class="spec-card">
+          <h3>处理器</h3>
+          <ul>
+            <li><strong>Intel Xeon E5-2630 v4</strong></li>
+            <li><strong>2.2GHz</strong> 基础频率，最高 <strong>3.1GHz</strong> 加速</li>
+            <li><strong>10 核 20 线程</strong>，<strong>25MB</strong> 三级缓存</li>
+            <li><strong>QPI 8GT/s</strong>，TDP <strong>85W</strong></li>
+            <li>支持双路（2S）配置</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3>内存</h3>
+          <ul>
+            <li>当前配置：<strong>63GB DDR4</strong></li>
+            <li>类型：<strong>DDR4 RDIMM/LRDIMM</strong>（建议同容量同频率混插）</li>
+            <li>插槽：<strong>24 个 DIMM</strong></li>
+            <li>理论最大容量：<strong>1.5TB</strong>（视内存类型与配置）</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3>扩展与网络</h3>
+          <ul>
+            <li>PCIe：最多 <strong>7 个</strong> 插槽（含 x16/x8 组合）</li>
+            <li>网络：<strong>Broadcom 5720 QP 1GbE</strong> 四口网卡</li>
+            <li>管理：<strong>iDRAC8</strong> 远程管理</li>
+          </ul>
+        </div>
+        <div class="spec-card">
+          <h3>存储与电源</h3>
+          <ul>
+            <li>控制器：<strong>PERC H730</strong> RAID 控制器，<strong>1GB NV 缓存</strong></li>
+            <li>硬盘：支持 <strong>3.5" 或 2.5"</strong> 热插拔盘位（机箱配置不同）</li>
+            <li>电源：<strong>750W</strong> 热插拔冗余（1+1）</li>
+            <li>散热：热插拔风扇，支持 <strong>N+1</strong> 冗余</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>适用场景</h2>
+      <ul>
+        <li><strong>虚拟化</strong>：部署多台 VM，承载中小规模虚拟化集群</li>
+        <li><strong>数据库</strong>：MySQL、PostgreSQL、SQL Server 等 OLTP/OLAP</li>
+        <li><strong>文件与备份</strong>：NAS/SAN、对象存储、离线/近线备份</li>
+        <li><strong>开发测试</strong>：CI/CD、编译、容器平台实验环境</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>内存配置建议</h2>
+      <p>当前为 <strong>63GB</strong>，常见混插示例（RDIMM 建议同容量同频率）：</p>
+      <ul>
+        <li><strong>16GB×3 + 8GB×1 + 4GB×1 = 63GB</strong>（均衡分布至各通道）</li>
+        <li><strong>16GB×2 + 8GB×3 + 4GB×1 = 63GB</strong>（优先填满通道 0/1）</li>
+        <li><strong>32GB×1 + 16GB×1 + 8GB×1 + 4GB×1 + 2GB×1 = 63GB</strong>（容量优先）</li>
+      </ul>
+      <p>提示：为获得更佳性能，建议保持各通道容量与频率一致，并优先使用同品牌同规格内存条。</p>
+    </section>
+
+    <section>
+      <h2>管理与维护</h2>
+      <ul>
+        <li><strong>iDRAC8</strong> 提供远程开机、重启、控制台、日志与固件更新</li>
+        <li><strong>PERC H730</strong> 支持 RAID 0/1/5/6/10/50/60，<strong>1GB NV 缓存</strong> 提升写入与重建性能</li>
+        <li><strong>热插拔电源与风扇</strong>，支持在线更换，降低停机风险</li>
+      </ul>
+    </section>
+  </main>
+  <footer>
+    <p>© 2025 PowerEdge R730 配置页 — 企业级稳定之选</p>
+  </footer>
+
+  <script>
+    // 原有复制功能
+    function copyText(text){
+      navigator.clipboard.writeText(text).then(()=>{
+        const btn=event.target;
+        btn.classList.add('copied');
+        setTimeout(()=>btn.classList.remove('copied'),1500);
+      });
+    }
+
+    // 音乐功能核心逻辑
+    let musicPlaying = false; // 初始未播放
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    const eggTip = document.getElementById('eggTip');
+    const titleEgg = document.getElementById('titleEgg');
+    const serverVideo = document.getElementById('serverVideo'); // 视频元素
+    let eggClickCount = 0;
+
+    // 音乐播放/暂停切换
+    function toggleMusic() {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicBtn.innerHTML = '🔇';
+        musicPlaying = false;
+      } else {
+        bgMusic.play().then(() => {
+          musicBtn.innerHTML = '🎵';
+          musicPlaying = true;
+        }).catch(err => {
+          console.log('音频播放失败:', err);
+          eggTip.textContent = '需要手动交互播放音乐哦 🎶';
+          eggTip.classList.add('show');
+          setTimeout(() => eggTip.classList.remove('show'), 3000);
+          musicPlaying = false;
+          musicBtn.innerHTML = '🔇';
+        });
+      }
+    }
+
+    // 音频状态兜底同步
+    bgMusic.addEventListener('play', () => {
+      musicPlaying = true;
+      musicBtn.innerHTML = '🎵';
+    });
+    bgMusic.addEventListener('pause', () => {
+      musicPlaying = false;
+      musicBtn.innerHTML = '🔇';
+    });
+
+    // 视频播放时自动暂停背景音乐
+    serverVideo.addEventListener('play', () => {
+      if (musicPlaying) {
+        bgMusic.pause();
+        musicBtn.innerHTML = '🔇';
+        musicPlaying = false;
+        eggTip.textContent = '视频播放中，背景音乐已暂停 🎬';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 3000);
+      }
+    });
+
+    // 标题彩蛋功能
+    titleEgg.addEventListener('click', () => {
+      eggClickCount++;
+      titleEgg.style.animation = 'bounce 0.5s ease';
+      setTimeout(() => titleEgg.style.animation = '', 500);
+      
+      if (eggClickCount === 5) {
+        eggTip.textContent = '恭喜发现彩蛋！🎁 服务器内存可扩展至1.5TB哦～';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 5000);
+        eggClickCount = 0;
+      } else if (eggClickCount === 1) {
+        eggTip.textContent = '继续点击有惊喜 🎮';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 2000);
+      }
+    });
+
+    // 页面加载显示彩蛋提示
+    window.addEventListener('load',()=>{
+      setTimeout(() => {
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 3000);
+      }, 1000);
+    });
+
+    // 彩蛋动画样式（动态添加）
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes bounce {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+        100% { transform: scale(1); }
+      }
+    `;
+    document.head.appendChild(style);
+  </script>
+</body>
+</html>
