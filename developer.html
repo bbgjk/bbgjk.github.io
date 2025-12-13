@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从零到一：我的个人网站搭建全记录 | 技术分享</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #10b981;
+            --dark: #1f2937;
+            --light: #f9fafb;
+            --muted: #6b7280;
+            --border: #e5e7eb;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Microsoft YaHei", sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 4rem 0 6rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="M0,0 L100,0 L100,100 Z" fill="white" opacity="0.05"/></svg>');
+            background-size: cover;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+
+        .tagline {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .tech-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 2rem;
+        }
+
+        .badge {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Section Styles */
+        section {
+            padding: 5rem 0;
+        }
+
+        section:nth-child(even) {
+            background-color: white;
+        }
+
+        h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: var(--dark);
+            position: relative;
+        }
+
+        h2::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 2px;
+        }
+
+        h3 {
+            font-size: 1.5rem;
+            margin: 1.5rem 0 1rem;
+            color: var(--primary);
+        }
+
+        /* Card Styles */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            padding: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        /* Step Styles */
+        .steps {
+            counter-reset: step-counter;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .step {
+            display: flex;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .step::before {
+            counter-increment: step-counter;
+            content: counter(step-counter);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 50px;
+            height: 50px;
+            background: var(--primary);
+            color: white;
+            border-radius: 50%;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-right: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step:not(:last-child)::after {
+            content: "";
+            position: absolute;
+            top: 50px;
+            left: 25px;
+            width: 2px;
+            height: calc(100% + 1rem);
+            background: var(--border);
+        }
+
+        .note {
+            background: #f0f9ff;
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        .warning {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 5px 5px 0;
+        }
+
+        /* FAQ Styles */
+        .faq-item {
+            margin-bottom: 1.5rem;
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            background: white;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s, padding 0.3s;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 1.5rem 1.5rem;
+            max-height: 500px;
+        }
+
+        /* Footer Styles */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 3rem 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        .footer-links a {
+            color: white;
+            text-decoration: none;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.8;
+        }
+
+        .copyright {
+            margin-top: 2rem;
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            .step {
+                flex-direction: column;
+            }
+
+            .step::before {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .step:not(:last-child)::after {
+                display: none;
+            }
+
+            .footer-links {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+        /* 音乐控制按钮 - 通用样式 */
+        .music-control {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #F2B233; /* mc-accent 色值 */
+            border: none;
+            color: #3C3C3C;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            z-index: 999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease;
+        }
+        .music-control:hover {
+            transform: scale(1.1);
+        }
+        /* 彩蛋提示（可选，如需保留提示功能则添加） */
+        .easter-egg-tip {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 998;
+        }
+        .easter-egg-tip.show {
+            opacity: 1;
+        }
+        /* 移动端适配 */
+        @media(max-width:600px){
+            .music-control {
+                width: 40px;
+                height: 40px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 音乐相关HTML（移到body内顶部，确保能被JS获取） -->
+    <div class="easter-egg-tip" id="eggTip">点击标题有彩蛋哦 🎉</div>
+    <button class="music-control" id="musicBtn" onclick="toggleMusic()">🔇</button>
+    <audio id="bgMusic" loop preload="auto">
+        <source src="https://mineserver.site/music/yidiandian.mp3" type="audio/mp3">
+    </audio>
+
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <h1>从零搭建个人网站</h1>
+                <p class="tagline">一次关于XAMPP、樱花内网穿透与自主探索的技术实践</p>
+                <p>本网站基于XAMPP构建，通过樱花FRP实现公网访问，记录搭建过程中的经验、挑战与解决方案。</p>
+                
+                <div class="tech-badges">
+                    <span class="badge">XAMPP</span>
+                    <span class="badge">Apache</span>
+                    <span class="badge">樱花FRP</span>
+                    <span class="badge">内网穿透</span>
+                    <span class="badge">域名解析</span>
+                    <span class="badge">网站部署</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <section id="introduction">
+        <div class="container">
+            <h2>为什么分享这个经验？</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <div class="card-icon">💡</div>
+                    <h3>技术民主化</h3>
+                    <p>曾经，搭建一个可公开访问的网站需要昂贵的服务器和专业的技术知识。现在，借助XAMPP、樱花FRP等工具，任何人都可以在自己的计算机上建立网站并分享到互联网。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🚀</div>
+                    <h3>学习价值</h3>
+                    <p>通过完整的建站流程，可以深入理解Web服务器工作原理、网络地址转换、域名解析等核心概念，这比单纯使用现成平台更有教育意义。</p>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔧</div>
+                    <h3>问题解决</h3>
+                    <p>在搭建过程中会遇到各种问题，如端口冲突、配置错误等。记录这些问题的解决方法可以帮助遇到相同困境的后来者。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="steps">
+        <div class="container">
+            <h2>搭建流程详解</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-content">
+                        <h3>环境准备：XAMPP的安装与配置</h3>
+                        <p>XAMPP是一个集成的Web服务器解决方案，包含Apache、MySQL、PHP和Perl，可以快速在本地搭建Web服务器环境。</p>
+                        
+                        <div class="note">
+                            <p><strong>关键步骤：</strong></p>
+                            <ul>
+                                <li>从Apache Friends官网下载适合您操作系统的XAMPP版本</li>
+                                <li>安装过程中注意选择安装目录，避免系统权限问题</li>
+                                <li>安装完成后启动XAMPP控制面板，开启Apache服务</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="warning">
+                            <p><strong>常见问题：端口冲突</strong></p>
+                            <p>在Windows系统中，80端口（HTTP默认端口）和443端口（HTTPS默认端口）可能被其他应用程序占用，导致Apache启动失败[6,8](@ref)。解决方法包括：</p>
+                            <ul>
+                                <li>使用命令<code>netstat -ano | findstr :80</code>查找占用80端口的进程[8](@ref)</li>
+                                <li>在XAMPP控制面板中更改Apache的监听端口（如改为8080）</li>
+                                <li>停止占用端口的服务（如IIS、SQL Server Reporting Services等）[7](@ref)</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-content">
+                        <h3>网站开发与本地测试</h3>
+                        <p>将网站文件放置在XAMPP的<code>htdocs</code>目录下，即可通过<code>http://localhost</code>或<code>http://localhost:端口号</code>进行本地访问测试。</p>
+                        
+                        <div class="note">
+                            <p><strong>最佳实践：</strong></p>
+                            <ul>
+                                <li>在<code>htdocs</code>目录下为每个网站创建独立文件夹</li>
+                                <li>本地测试确保网站功能完整后再进行公网发布</li>
+                                <li>使用相对路径而非绝对路径引用资源，避免部署后路径错误</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-content">
+                        <h3>内网穿透：樱花FRP的配置</h3>
+                        <p>樱花FRP是一种内网穿透服务，可以将本地服务器暴露到公网，使外部用户能够访问[1,3](@ref)。其本质是一种反向代理技术，通过FRP服务器转发流量到本地服务器[1](@ref)。</p>
+                        
+                        <div class="note">
+                            <p><strong>配置步骤：</strong></p>
+                            <ul>
+                                <li>注册樱花FRP账号并完成实名认证（国内服务要求）</li>
+                                <li>在管理面板创建隧道，选择协议类型（HTTP/HTTPS）和节点[1](@ref)</li>
+                                <li>设置本地IP（127.0.0.1）和端口（与XAMPP中Apache配置一致）</li>
+                                <li>下载并配置FRP客户端，使用访问密钥登录[1](@ref)</li>
+                                <li>启动隧道，获取公网访问地址</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="note">
+                            <p><strong>海外节点优势：</strong></p>
+                            <ul>
+                                <li>通常无需域名备案即可使用</li>
+                                <li>访问速度可能对国际用户更友好</li>
+                                <li>提供更多协议支持和更灵活的配置选项</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="step">
+                    <div class="step-content">
+                        <h3>域名解析与网站访问</h3>
+                        <p>虽然可以通过樱花FRP提供的直接地址访问网站，但使用自定义域名更专业且易于记忆。</p>
+                        
+                        <div class="note">
+                            <p><strong>域名配置流程：</strong></p>
+                            <ul>
+                                <li>在域名注册商处添加CNAME记录</li>
+                                <li>主机记录设置为所需子域名（如"www"或"@"）</li>
+                                <li>记录值设置为樱花FRP提供的域名[1](@ref)</li>
+                                <li>等待DNS解析生效（通常几分钟到几小时）</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="optimization">
+        <div class="container">
+            <h2>性能优化与安全考虑</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Apache服务器调优</h3>
+                    <p>通过调整Apache配置可以提升网站性能和并发处理能力[9,10](@ref)：</p>
+                    <ul>
+                        <li><strong>启用KeepAlive</strong>：减少连接建立开销，提高页面加载速度[10,11](@ref)</li>
+                        <li><strong>调整MPM参数</strong>：根据服务器硬件调整进程和线程数[11](@ref)</li>
+                        <li><strong>启用压缩</strong>：使用mod_deflate模块压缩文本内容，减少传输数据量[10,11](@ref)</li>
+                        <li><strong>静态资源缓存</strong>：设置Expires头，利用浏览器缓存静态资源[10,11](@ref)</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>安全加固措施</h3>
+                    <p>个人网站也需关注基本安全防护：</p>
+                    <ul>
+                        <li><strong>定期更新</strong>：保持XAMPP组件和网站程序的最新版本[10](@ref)</li>
+                        <li><strong>禁用不必要模块</strong>：减少Apache的攻击面[10,11](@ref)</li>
+                        <li><strong>注意文件权限</strong>：确保网站文件只有必要的最小权限</li>
+                        <li><strong>数据库安全</strong>：使用强密码，避免远程访问数据库除非必要[4](@ref)</li>
+                    </ul>
+                </div>
+                
+                <div class="card">
+                    <h3>内网穿透服务的局限性</h3>
+                    <p>使用免费内网穿透服务需了解其限制：</p>
+                    <ul>
+                        <li><strong>带宽限制</strong>：免费服务通常有带宽或流量限制</li>
+                        <li><strong>稳定性</strong>：相比专业托管服务，稳定性可能较差</li>
+                        <li><strong>功能限制</strong>：可能不支持某些高级功能或协议</li>
+                        <li><strong>依赖性</strong>：网站可用性依赖于第三方服务</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq">
+        <div class="container">
+            <h2>常见问题解答</h2>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>为什么Apache无法启动，提示端口被占用？</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>在Windows系统中，80端口可能被以下服务占用：IIS、World Wide Web发布服务、SQL Server Reporting Services、Skype等[6,8](@ref)。解决方法包括：</p>
+                    <ol>
+                        <li>使用命令<code>netstat -ano | findstr :80</code>查找占用进程[8](@ref)</li>
+                        <li>在XAMPP控制面板中更改Apache监听端口（如改为8080）</li>
+                        <li>停止占用80端口的服务（需谨慎操作，确保不影响系统运行）[7](@ref)</li>
+                        <li>修改注册表中HTTP服务的启动配置（针对System进程占用情况）[6](@ref)</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>内网穿透是否安全？如何防范风险？</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>内网穿透将本地服务暴露到公网，确实增加了一定安全风险。可采取以下防范措施：</p>
+                    <ul>
+                        <li>使用强密码保护所有管理界面</li>
+                        <li>定期更新XAMPP组件和网站程序</li>
+                        <li>仅开启必要的Apache模块和服务[10,11](@ref)</li>
+                        <li>避免在公网环境开启数据库远程访问，除非绝对必要[4](@ref)</li>
+                        <li>考虑使用樱花FRP的访问控制功能，限制访问IP范围</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>为什么我的网站在公网访问速度很慢？</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>网站访问速度受多种因素影响：</p>
+                    <ul>
+                        <li><strong>FRP节点选择</strong>：选择距离您和目标用户较近的节点</li>
+                        <li><strong>本地网络上传速度</strong>：家庭网络通常上传速度有限</li>
+                        <li><strong>网站优化程度</strong>：启用Gzip压缩、优化图片等可提升速度[10,11](@ref)</li>
+                        <li><strong>同时连接数</strong>：免费FRP服务可能对并发连接数有限制</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question">
+                    <span>我需要为网站备案吗？</span>
+                    <span>+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>备案要求主要取决于以下因素：</p>
+                    <ul>
+                        <li><strong>FRP节点位置</strong>：使用国内节点通常需要备案，海外节点则不需要[1](@ref)</li>
+                        <li><strong>网站内容性质</strong>：商业性或特定内容可能需备案</li>
+                        <li><strong>域名注册商要求</strong>：不同注册商可能有不同政策</li>
+                    </ul>
+                    <p>使用樱花FRP的海外节点建站，通常无需备案即可使用[3](@ref)。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="conclusion">
+        <div class="container">
+            <h2>总结与展望</h2>
+            <div class="card">
+                <p>通过XAMPP和樱花FRP搭建个人网站是一次极具价值的技术实践。它不仅让我们拥有了一个展示自我的平台，更重要的是，在这个过程中我们深入了解了Web技术栈的各个环节。</p>
+                
+                <p>这种基于本地开发环境+内网穿透的建站方式特别适合：</p>
+                <ul>
+                    <li><strong>学习者</strong>：希望深入了解网站工作原理和技术细节</li>
+                    <li><strong>开发者</strong>：需要低成本测试环境或演示平台</li>
+                    <li><strong>技术爱好者</strong>：享受自主掌控技术的成就感</li>
+                </ul>
+                
+                <p>随着技术能力的提升，未来可以考虑将网站迁移到专业虚拟主机或云服务器，获得更好的性能和稳定性。但无论如何，这次实践经验将为未来的Web项目打下坚实基础。</p>
+                
+                <p>技术本质上是为了解决问题和创造价值。无论选择哪种建站方式，最重要的是开始行动，将想法变为现实。</p>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <p>本网站基于XAMPP + 樱花FRP搭建 | 分享技术经验，促进知识传播</p>
+                
+                <div class="footer-links">
+                    <a href="#">返回顶部</a>
+                    <a href="#introduction">项目介绍</a>
+                    <a href="#steps">搭建流程</a>
+                    <a href="#faq">常见问题</a>
+                </div>
+                
+                <p class="copyright">© 2025 个人技术博客 | 基于实际建站经验分享</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // FAQ交互功能
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const item = question.parentElement;
+                item.classList.toggle('active');
+                // 切换FAQ图标
+                const icon = question.querySelector('span:last-child');
+                icon.textContent = item.classList.contains('active') ? '-' : '+';
+            });
+        });
+
+        // 音乐功能全局变量
+        let musicPlaying = false; // 初始为未播放状态
+        const bgMusic = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicBtn');
+        const eggTip = document.getElementById('eggTip') || null;
+
+        // 修复后的背景音乐控制逻辑
+        function toggleMusic() {
+            if (musicPlaying) {
+                // 当前是播放状态 → 暂停
+                bgMusic.pause();
+                musicBtn.innerHTML = '🔇'; // 显示播放图标
+                musicPlaying = false;
+            } else {
+                // 当前是暂停状态 → 播放
+                bgMusic.play().then(() => {
+                    // 播放成功：更新状态和图标
+                    musicBtn.innerHTML = '🎵'; // 显示暂停图标
+                    musicPlaying = true;
+                }).catch(err => {
+                    // 播放失败（浏览器限制）
+                    console.log('音频播放失败:', err);
+                    // 有彩蛋提示则显示
+                    if (eggTip) {
+                        eggTip.textContent = '需要手动交互播放音乐哦 🎶';
+                        eggTip.classList.add('show');
+                        setTimeout(() => eggTip.classList.remove('show'), 3000);
+                    }
+                    // 失败时不修改状态，避免图标错乱
+                    musicPlaying = false;
+                    musicBtn.innerHTML = '🔇';
+                });
+            }
+        }
+
+        // 监听音频实际播放状态（兜底同步）
+        bgMusic.addEventListener('play', () => {
+            musicPlaying = true;
+            musicBtn.innerHTML = '🎵';
+        });
+        bgMusic.addEventListener('pause', () => {
+            musicPlaying = false;
+            musicBtn.innerHTML = '🔇';
+        });
+
+        // 页面加载后显示彩蛋提示
+        if (eggTip) {
+            window.addEventListener('load',()=>{
+                setTimeout(() => {
+                    eggTip.classList.add('show');
+                    setTimeout(() => eggTip.classList.remove('show'), 3000);
+                }, 1000);
+            });
+        }
+
+        // 返回顶部功能
+        document.querySelector('.footer-links a:first-child').addEventListener('click', (e) => {
+            e.preventDefault();
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    </script>
+</body>
+</html>
