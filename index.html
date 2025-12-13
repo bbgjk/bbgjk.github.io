@@ -1,1017 +1,470 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>你好的世界 | Minecraft Java版服务器</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        :root {
-            --mc-green: #5b8c3c;
-            --mc-dark-green: #46692f;
-            --mc-brown: #8d6e4a;
-            --mc-dark-brown: #6d5539;
-            --mc-dirt: #9c7c5e;
-            --mc-stone: #9d9d9d;
-            --mc-grass: #78a355;
-            --mc-water: #3a71ae;
-            --mc-sky: #7ec0ee;
-            --mc-accent: #ffcc5c; /* 新增：金色强调色 */
-            --shadow: 0 4px 12px rgba(0,0,0,0.2);
-            --transition: all 0.3s ease;
-        }
-
-        body {
-            background: linear-gradient(to bottom, var(--mc-sky), #d0e8f2);
-            color: #333;
-            line-height: 1.6;
-            overflow-x: hidden;
-            position: relative;
-            min-height: 100vh;
-        }
-
-        /* 像素化背景 - 增强视觉效果 */
-        .pixel-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
-            background-size: 20px 20px;
-            z-index: -1;
-            opacity: 0.7;
-        }
-
-        /* 方块装饰元素 - 增加更多种类 */
-        .mc-block {
-            position: absolute;
-            width: 40px;
-            height: 40px;
-            background-size: cover;
-            z-index: -1;
-            opacity: 0.7;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
-        }
-
-        .grass-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%2378a355"/><rect width="40" height="10" y="30" fill="%239c7c5e"/><rect x="5" y="0" width="10" height="5" fill="%235b8c3c"/><rect x="25" y="5" width="10" height="5" fill="%235b8c3c"/></svg>');
-        }
-
-        .dirt-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239c7c5e"/><rect x="5" y="5" width="10" height="10" fill="%238d6e4a"/><rect x="25" y="25" width="10" height="10" fill="%238d6e4a"/></svg>');
-        }
-
-        .stone-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%239d9d9d"/><rect x="5" y="5" width="10" height="10" fill="%238a8a8a"/><rect x="25" y="25" width="10" height="10" fill="%238a8a8a"/></svg>');
-        }
-
-        .wood-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%23c19a6b"/><rect x="0" y="15" width="40" height="10" fill="%238b4513" opacity="0.3"/></svg>');
-        }
-
-        .glass-block {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="%23add8e6" opacity="0.5"/><line x1="0" y1="0" x2="40" y2="40" stroke="white" stroke-width="1" opacity="0.3"/><line x1="40" y1="0" x2="0" y2="40" stroke="white" stroke-width="1" opacity="0.3"/></svg>');
-        }
-
-        /* 导航栏 - 增强深度感 */
-        header {
-            background-color: var(--mc-dark-brown);
-            padding: 1rem 2rem;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            box-shadow: var(--shadow);
-            border-bottom: 4px solid var(--mc-brown);
-            transition: var(--transition);
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: var(--transition);
-        }
-
-        .logo img {
-            width: 50px;
-            height: 50px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
-        }
-
-        .logo h1 {
-            color: white;
-            font-size: 1.8rem;
-            text-shadow: 2px 2px 0 #000;
-            letter-spacing: 1px;
-            font-family: 'Minecraft', sans-serif;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 25px;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1.1rem;
-            padding: 8px 15px;
-            border-radius: 5px;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 0;
-            height: 2px;
-            background-color: var(--mc-accent);
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover {
-            background-color: var(--mc-brown);
-            transform: translateY(-2px);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* 英雄区域 - 增强视觉冲击力 */
-        .hero {
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 2rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(ellipse at center, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 70%);
-            z-index: 1;
-        }
-
-        .hero-content {
-            max-width: 800px;
-            z-index: 2;
-            animation: fadeInUp 1s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .hero h2 {
-            font-size: 3.5rem;
-            color: white;
-            text-shadow: 3px 3px 0 #000, 0 0 10px rgba(255,204,92,0.3);
-            margin-bottom: 1rem;
-            letter-spacing: 2px;
-            font-family: 'Minecraft', sans-serif;
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            color: white;
-            text-shadow: 2px 2px 0 #000;
-            margin-bottom: 2rem;
-        }
-
-        .server-address {
-            background-color: rgba(0,0,0,0.7);
-            padding: 15px 30px;
-            border-radius: 10px;
-            display: inline-block;
-            border: 3px solid var(--mc-green);
-            box-shadow: 0 0 15px rgba(92, 184, 92, 0.7);
-            transition: var(--transition);
-            margin-bottom: 20px;
-        }
-
-        .server-address:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 25px rgba(92, 184, 92, 0.9);
-        }
-
-        .server-address h3 {
-            color: white;
-            font-size: 2.5rem;
-            margin: 0;
-            font-family: 'Courier New', monospace;
-            letter-spacing: 2px;
-        }
-
-        .server-address span {
-            color: var(--mc-green);
-            font-weight: bold;
-            text-shadow: 0 0 5px rgba(92, 184, 92, 0.8);
-        }
-
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            color: white;
-            background: rgba(0,0,0,0.5);
-            padding: 8px 15px;
-            border-radius: 20px;
-            margin-bottom: 30px;
-        }
-
-        .status-dot {
-            width: 12px;
-            height: 12px;
-            background-color: #4CAF50;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(76, 175, 80, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--mc-green);
-            color: white;
-            padding: 15px 40px;
-            font-size: 1.3rem;
-            font-weight: bold;
-            text-decoration: none;
-            border-radius: 8px;
-            margin-top: 10px;
-            border: 3px solid var(--mc-dark-green);
-            box-shadow: 0 5px 0 var(--mc-dark-green), 0 0 15px rgba(0,0,0,0.2);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .cta-button::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .cta-button:hover {
-            transform: translateY(3px);
-            box-shadow: 0 2px 0 var(--mc-dark-green), 0 0 20px rgba(0,0,0,0.3);
-            background-color: var(--mc-dark-green);
-        }
-
-        .cta-button:hover::before {
-            left: 100%;
-        }
-
-        /* 特色区域 - 增强卡片质感 */
-        .features {
-            background-color: rgba(255, 255, 255, 0.85);
-            padding: 80px 2rem;
-            position: relative;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 2.5rem;
-            margin-bottom: 60px;
-            color: var(--mc-dark-brown);
-            text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
-            position: relative;
-            display: inline-block;
-            left: 50%;
-            transform: translateX(-50%);
-            font-family: 'Minecraft', sans-serif;
-        }
-
-        .section-title::after {
-            content: '';
-            display: block;
-            width: 60%;
-            height: 4px;
-            background-color: var(--mc-accent);
-            margin: 15px auto 0;
-            border-radius: 2px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .feature-card {
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: var(--transition);
-            border-top: 5px solid var(--mc-green);
-            position: relative;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
-        }
-
-        .feature-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, var(--mc-green), var(--mc-accent));
-            opacity: 0;
-            transition: var(--transition);
-        }
-
-        .feature-card:hover::before {
-            opacity: 1;
-        }
-
-        .feature-icon {
-            background-color: var(--mc-green);
-            height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2.5rem;
-            color: white;
-            transition: var(--transition);
-        }
-
-        .feature-card:hover .feature-icon {
-            background-color: var(--mc-dark-green);
-            transform: scale(1.05);
-        }
-
-        .feature-content {
-            padding: 25px;
-        }
-
-        .feature-content h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-            color: var(--mc-dark-green);
-        }
-
-        .feature-content p {
-            color: #555;
-        }
-
-        /* 服务器信息 - 增强数据展示 */
-        .server-info {
-            padding: 80px 2rem;
-            background: linear-gradient(to bottom, var(--mc-brown), var(--mc-dark-brown));
-            color: white;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .server-info::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="1"/></svg>');
-            background-size: 40px 40px;
-            z-index: 0;
-        }
-
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 30px;
-            max-width: 1000px;
-            margin: 50px auto 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .info-item {
-            background: rgba(0,0,0,0.3);
-            padding: 30px;
-            border-radius: 10px;
-            border: 2px solid var(--mc-dirt);
-            transition: var(--transition);
-        }
-
-        .info-item:hover {
-            transform: translateY(-8px);
-            background: rgba(0,0,0,0.4);
-            border-color: var(--mc-accent);
-        }
-
-        .info-item i {
-            font-size: 3rem;
-            margin-bottom: 20px;
-            color: var(--mc-green);
-            transition: var(--transition);
-        }
-
-        .info-item:hover i {
-            color: var(--mc-accent);
-            transform: scale(1.1);
-        }
-
-        .info-item h3 {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-        }
-
-        .info-item p {
-            font-size: 1.1rem;
-            opacity: 0.9;
-        }
-
-        /* 规则区域 - 增强可读性 */
-        .rules {
-            padding: 80px 2rem;
-            background-color: rgba(255, 255, 255, 0.9);
-        }
-
-        .rules-container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            border-left: 8px solid var(--mc-green);
-            position: relative;
-        }
-
-        .rules-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 100px;
-            height: 100px;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%235b8c3c" opacity="0.1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>');
-            background-repeat: no-repeat;
-            background-position: center;
-            z-index: 0;
-        }
-
-        .rules-list {
-            list-style-type: none;
-            position: relative;
-            z-index: 1;
-        }
-
-        .rules-list li {
-            padding: 15px;
-            margin-bottom: 15px;
-            background: #f9f9f9;
-            border-radius: 5px;
-            border-left: 4px solid var(--mc-brown);
-            display: flex;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .rules-list li:hover {
-            background: #f0f0f0;
-            transform: translateX(5px);
-            border-left-color: var(--mc-green);
-        }
-
-        .rules-list li i {
-            margin-right: 15px;
-            color: var(--mc-green);
-            font-size: 1.2rem;
-        }
-
-        /* 加入方式 - 增强步骤感 */
-        .join-section {
-            padding: 80px 2rem;
-            background: linear-gradient(135deg, var(--mc-sky), var(--mc-water));
-            text-align: center;
-            color: white;
-            position: relative;
-        }
-
-        .join-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="60" height="60"><circle cx="30" cy="30" r="2" fill="rgba(255,255,255,0.3)"/></svg>');
-            background-size: 60px 60px;
-            z-index: 0;
-        }
-
-        .join-steps {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 40px;
-            max-width: 1000px;
-            margin: 50px auto 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* 连接线 - 仅在桌面显示 */
-        @media (min-width: 992px) {
-            .join-steps::before {
-                content: '';
-                position: absolute;
-                top: 25px;
-                left: 125px;
-                right: 125px;
-                height: 4px;
-                background-color: rgba(255,255,255,0.5);
-                z-index: -1;
-            }
-        }
-
-        .step {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(10px);
-            border-radius: 10px;
-            padding: 30px;
-            width: 250px;
-            border: 2px solid rgba(255,255,255,0.3);
-            transition: var(--transition);
-        }
-
-        .step:hover {
-            transform: translateY(-10px) scale(1.05);
-            background: rgba(255, 255, 255, 0.25);
-            border-color: white;
-        }
-
-        .step-number {
-            background: white;
-            color: var(--mc-water);
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin: 0 auto 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-            transition: var(--transition);
-        }
-
-        .step:hover .step-number {
-            background-color: var(--mc-accent);
-            color: var(--mc-dark-brown);
-            transform: rotate(10deg);
-        }
-
-        .step h3 {
-            font-size: 1.5rem;
-            margin-bottom: 15px;
-        }
-
-        /* 页脚 - 增强信息层级 */
-        footer {
-            background-color: var(--mc-dark-brown);
-            color: white;
-            padding: 60px 2rem 30px;
-            text-align: center;
-            position: relative;
-        }
-
-        footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 8px;
-            background: linear-gradient(90deg, var(--mc-green), var(--mc-accent), var(--mc-water));
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .footer-links {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin: 30px 0;
-            flex-wrap: wrap;
-        }
-
-        .footer-links a {
-            color: rgba(255,255,255,0.8);
-            text-decoration: none;
-            transition: var(--transition);
-        }
-
-        .footer-links a:hover {
-            color: var(--mc-accent);
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .social-links a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 50px;
-            height: 50px;
-            background: var(--mc-brown);
-            color: white;
-            border-radius: 50%;
-            font-size: 1.5rem;
-            transition: var(--transition);
-            border: 2px solid transparent;
-        }
-
-        .social-links a:hover {
-            transform: translateY(-5px) rotate(10deg);
-            background: transparent;
-            border-color: var(--mc-accent);
-            color: var(--mc-accent);
-        }
-
-        .copyright {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 1px solid rgba(255,255,255,0.2);
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        /* 响应式设计优化 */
-        @media (max-width: 768px) {
-            .navbar {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .hero h2 {
-                font-size: 2.5rem;
-            }
-            
-            .hero p {
-                font-size: 1.2rem;
-            }
-            
-            .server-address h3 {
-                font-size: 1.8rem;
-            }
-            
-            .section-title {
-                font-size: 2rem;
-            }
-            
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-
-            .features-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .hero h2 {
-                font-size: 2rem;
-            }
-            
-            .server-address h3 {
-                font-size: 1.5rem;
-            }
-            
-            .step {
-                width: 100%;
-            }
-
-            .section-title {
-                font-size: 1.8rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的世界服务器 mineserver.site</title>
+  <meta name="description" content="Java Paper 1.20.1，双路 E5-2630 v4，20 核 40 线程，自动备份，防 DDoS 节点，稳定低延迟，最多 118 人在线。" />
+  <style>
+    :root { 
+      --mc-green:#55AA55; 
+      --mc-dark:#2C2C2C; 
+      --mc-bg:#EDE4D3; 
+      --mc-text:#3C3C3C;
+      --mc-accent:#F2B233;
+    }
+    /* 背景层 */
+    .bg-layer {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: url('https://img-baofun.zhhainiao.com/fs/7649e2dbc7044ee71743022dd2d51701.jpg') center/cover no-repeat;
+      opacity: 1;
+      z-index: -1;
+    }
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans","Microsoft YaHei",sans-serif;
+      background:var(--mc-bg);
+      color:var(--mc-text);
+      position: relative;
+      min-height: 100vh;
+    }
+    header{
+      background:var(--mc-dark);
+      color:#fff;
+      text-align:center;
+      padding:2rem 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    header h1{
+      margin:0;
+      font-size:2.5rem;
+      letter-spacing:-.5px;
+      position: relative;
+      display: inline-block;
+    }
+    /* 彩蛋：标题点击效果 */
+    header h1.clicked {
+      animation: bounce 0.5s ease;
+      color: var(--mc-accent);
+    }
+    @keyframes bounce {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    header p{
+      margin:.5rem 0 0;
+      opacity:.85;
+    }
+    main{
+      max-width:900px;
+      margin:0 auto;
+      padding:2rem 1rem;
+      background: rgba(255,255,255,0.85);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    section{
+      margin-bottom:2.5rem;
+    }
+    h2{
+      color:var(--mc-dark);
+      border-left:4px solid var(--mc-green);
+      padding-left:.75rem;
+      margin-top:0;
+    }
+    .badges{
+      display:flex;
+      flex-wrap:wrap;
+      gap:1rem;
+      margin-top:1rem;
+    }
+    .badge{
+      background:#fff;
+      border:2px solid var(--mc-green);
+      border-radius:6px;
+      padding:.6rem 1rem;
+      font-weight:600;
+      box-shadow:0 2px 4px rgba(0,0,0,.05);
+      transition: transform 0.2s ease;
+    }
+    .badge:hover {
+      transform: translateY(-3px);
+    }
+    .badge code{
+      background:var(--mc-bg);
+      padding:.2rem .4rem;border-radius:3px;font-size:.9em;
+    }
+    .copy{
+      display:inline-block;
+      margin-top:.5rem;
+      background:var(--mc-green);
+      color:#fff;
+      border:none;
+      padding:.6rem 1.2rem;
+      border-radius:4px;
+      cursor:pointer;
+      font-weight:600;
+      transition:.2s;
+    }
+    .copy:hover{background:#449944;}
+    .copy:active{transform:scale(.98);}
+    .copy::after{content:" 已复制";margin-left:.5rem;opacity:0;transition:.2s;}
+    .copy.copied::after{opacity:1;}
+    .join{text-align:center;margin-top:2rem;}
+    .join-btn{
+      background:var(--mc-accent);
+      color:#3C3C3C;
+      border:none;
+      padding:1rem 2rem;
+      border-radius:6px;
+      font-size:1.25rem;
+      font-weight:700;
+      text-decoration:none;
+      display:inline-block;
+      box-shadow:0 4px 8px rgba(0,0,0,.1);
+      transition:.2s;
+      margin:0.5rem;
+    }
+    .join-btn:hover{
+      background:#E1A020;
+      transform: translateY(-2px);
+    }
+    footer{
+      text-align:center;
+      padding:1.5rem 1rem;
+      font-size:.9rem;
+      color:#666;
+      background: var(--mc-dark);
+      color: #fff;
+      margin-top: 2rem;
+    }
+    .faq details{
+      background:#fff;
+      border:1px solid #ddd;
+      border-radius:6px;
+      margin-bottom:.75rem;
+      padding:.75rem 1rem;
+      cursor:pointer;
+      transition: background 0.2s ease;
+    }
+    .faq details:hover {
+      background: #f9f9f9;
+    }
+    .faq summary{font-weight:600;outline:none;}
+    .faq p{margin:.5rem 0 0;}
+    .stats{
+      display:flex;
+      gap:1.5rem;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 1rem;
+    }
+    .stat{text-align:center;}
+    .stat .num{
+      font-size:1.75rem;
+      font-weight:700;
+      color:var(--mc-green);
+    }
+    .stat .label{font-size:.9rem;opacity:.8;}
+    /* 音乐控制按钮 */
+    .music-control {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: var(--mc-accent);
+      border: none;
+      color: #3C3C3C;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+    .music-control:hover {
+      transform: scale(1.1);
+    }
+    /* 彩蛋提示 */
+    .easter-egg-tip {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0,0,0,0.7);
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      font-size: 12px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 998;
+    }
+    .easter-egg-tip.show {
+      opacity: 1;
+    }
+    @media(max-width:600px){
+      header h1{font-size:2rem;} 
+      .badges{flex-direction:column;}
+      .music-control {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <!-- 像素背景 -->
-    <div class="pixel-bg"></div>
-    
-    <!-- 动态方块元素 - 增加更多种类和位置 -->
-    <div class="mc-block grass-block" style="top: 10%; left: 5%;"></div>
-    <div class="mc-block dirt-block" style="top: 15%; left: 15%;"></div>
-    <div class="mc-block stone-block" style="top: 20%; right: 10%;"></div>
-    <div class="mc-block grass-block" style="bottom: 25%; left: 8%;"></div>
-    <div class="mc-block dirt-block" style="bottom: 15%; right: 12%;"></div>
-    <div class="mc-block stone-block" style="bottom: 30%; right: 20%;"></div>
-    <div class="mc-block wood-block" style="top: 40%; left: 5%;"></div>
-    <div class="mc-block glass-block" style="bottom: 50%; right: 5%;"></div>
+  <!-- 背景层 -->
+  <div class="bg-layer"></div>
+  <!-- 彩蛋提示 -->
+  <div class="easter-egg-tip" id="eggTip">点击标题有彩蛋哦 🎉</div>
+  <!-- 音乐控制按钮 -->
+  <button class="music-control" id="musicBtn" onclick="toggleMusic()">🔇</button>
+  <!-- 背景音乐（隐藏） -->
+  <audio id="bgMusic" loop preload="auto">
+    <source src="https://mineserver.site/music/yidiandian.mp3" type="audio/mp3">
+  </audio>
 
-    <!-- 导航栏 -->
-    <header>
-        <div class="navbar">
-            <div class="logo">
-                <i class="fas fa-cubes fa-2x" style="color: var(--mc-green);"></i>
-                <h1>你好的世界</h1>
-            </div>
-            <nav class="nav-links">
-                <a href="#features"><i class="fas fa-star"></i> 服务器特色</a>
-                <a href="#info"><i class="fas fa-server"></i> 服务器信息</a>
-                <a href="#rules"><i class="fas fa-book"></i> 服务器规则</a>
-                <a href="#join"><i class="fas fa-plug"></i> 加入我们</a>
-                <!-- 导航栏中的 GitHub 链接 -->
-                <a href="https://github.com/bbgjk/bbgjk.github.io" target="_blank" rel="noopener noreferrer">
-                    <i class="fab fa-github"></i> GitHub
-                </a>
-            </nav>
-        </div>
-    </header>
-
-    <!-- 英雄区域 -->
-    <section class="hero">
-        <div class="hero-content">
-            <h2>欢迎来到你好的世界</h2>
-            <p>一个充满创意与冒险的Minecraft Java版服务器</p>
-            <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span>服务器在线 - 58名玩家正在游戏中</span>
-            </div>
-            <div class="server-address">
-                <h3>服务器地址: <span>mineserver.site</span></h3>
-            </div>
-            <a href="#join" class="cta-button">立即加入 <i class="fas fa-arrow-right"></i></a>
-        </div>
+  <header>
+    <h1 id="titleEgg">我的世界服务器</h1>
+    <p>地址：<strong id="server-addr">mineserver.site</strong> <button class="copy" onclick="copyAddr()">复制</button></p>
+  </header>
+  <main>
+    <section>
+      <h2>服务器亮点</h2>
+      <div class="badges">
+        <div class="badge">Java <strong>Paper 1.20.1</strong></div>
+        <div class="badge">双路 <strong>E5-2630 v4</strong> · <strong>20 核 40 线程</strong></div>
+        <div class="badge">自动备份</div>
+        <div class="badge">防 <strong>DDoS</strong> 节点</div>
+        <div class="badge">延迟低至 <strong>&lt; 80ms</strong>（视地区）</div>
+        <div class="badge">最大 <strong>118</strong> 人在线</div>
+      </div>
     </section>
 
-    <!-- 特色区域 -->
-    <section class="features" id="features">
-        <h2 class="section-title">服务器特色</h2>
-        <div class="features-grid">
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>友好社区</h3>
-                    <p>加入我们活跃而友好的玩家社区，共同建设、探索和冒险。定期举办社区活动和建筑比赛。</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-shield-alt"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>强力反作弊</h3>
-                    <p>采用先进的反作弊系统，确保公平游戏环境，杜绝外挂和作弊行为。</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-sync-alt"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>定期更新</h3>
-                    <p>服务器持续更新，添加新内容和功能，保持游戏新鲜感和可玩性。</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-home"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>领地保护</h3>
-                    <p>完善的领地保护系统，保护你的建筑和物品安全，防止他人破坏。</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-dragon"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>丰富玩法</h3>
-                    <p>多种游戏模式：生存、创造、小游戏等，满足不同玩家的需求。</p>
-                </div>
-            </div>
-            <div class="feature-card">
-                <div class="feature-icon">
-                    <i class="fas fa-tachometer-alt"></i>
-                </div>
-                <div class="feature-content">
-                    <h3>高性能服务器</h3>
-                    <p>使用高性能硬件，保证服务器流畅运行，拒绝卡顿和延迟。</p>
-                </div>
-            </div>
-        </div>
+    <section>
+      <h2>快速加入</h2>
+      <p>Java 版客户端：直接输入服务器地址 <strong>mineserver.site</strong> 即可连接。</p>
+      <p>基岩版兼容：支持通过 <strong>GeyserMC</strong> 连接（如启用）。</p>
+      <div class="join">
+        <a class="join-btn" href="https://mineserver.site/server.html" onclick="trackJoin()">服务器详细配置</a>
+        <a class="join-btn" href="https://mineserver.site/thanks.html" onclick="trackJoin()">致谢</a>
+        <a class="join-btn" href="https://mineserver.site/developer.html" onclick="trackJoin()">友情链接</a>
+        <a class="join-btn" href="https://mineserver.site/win11.html" onclick="trackJoin()">windows11</a>
+      </div>
     </section>
 
-    <!-- 服务器信息 -->
-    <section class="server-info" id="info">
-        <h2 class="section-title">服务器信息</h2>
-        <div class="info-grid">
-            <div class="info-item">
-                <i class="fas fa-microchip"></i>
-                <h3>服务器版本</h3>
-                <p>Java版 1.20.1</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-plug"></i>
-                <h3>在线状态</h3>
-                <p>24/7 全天候运行</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-user-friends"></i>
-                <h3>在线玩家</h3>
-                <p>50人同时在线</p>
-            </div>
-            <div class="info-item">
-                <i class="fas fa-map"></i>
-                <h3>世界大小</h3>
-                <p>无限地图边界</p>
-            </div>
+    <section>
+      <h2>实时状态</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="num" id="online-count">--</div>
+          <div class="label">当前在线</div>
         </div>
+        <div class="stat">
+          <div class="num" id="version">1.20.1</div>
+          <div class="label">游戏版本</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="tps">19-20</div>
+          <div class="label">TPS</div>
+        </div>
+        <div class="stat">
+          <div class="num" id="ping">79ms</div>
+          <div class="label">延迟</div>
+        </div>
+      </div>
     </section>
 
-    <!-- 规则区域 -->
-    <section class="rules" id="rules">
-        <h2 class="section-title">服务器规则</h2>
-        <div class="rules-container">
-            <ul class="rules-list">
-                <li><i class="fas fa-ban"></i> 禁止使用任何形式的外挂、作弊模组或利用游戏漏洞</li>
-                <li><i class="fas fa-comment-slash"></i> 禁止在聊天频道发布广告、刷屏或不当言论</li>
-                <li><i class="fas fa-gavel"></i> 禁止恶意破坏他人建筑或财产</li>
-                <li><i class="fas fa-user-secret"></i> 禁止冒充管理员或其他玩家</li>
-                <li><i class="fas fa-exchange-alt"></i> 禁止进行现实货币交易</li>
-                <li><i class="fas fa-heart"></i> 尊重其他玩家，保持友好交流氛围</li>
-                <li><i class="fas fa-exclamation-triangle"></i> 发现BUG请及时向管理员报告</li>
-            </ul>
-        </div>
+    <section class="faq">
+      <h2>常见问题</h2>
+      <details>
+        <summary>支持哪些版本与客户端？</summary>
+        <p>服务端为 <strong>Java Paper 1.20.1</strong>，推荐使用官方 Java 版客户端。如服务器启用 <strong>GeyserMC</strong>，基岩版也可连接。</p>
+      </details>
+      <details>
+        <summary>最大在线人数与性能如何？</summary>
+        <p>服务器配置为 <strong>双路 E5-2630 v4（20 核 40 线程）</strong>，优化后稳定承载，官方标注最大 <strong>118</strong> 人在线。</p>
+      </details>
+      <details>
+        <summary>是否有备份与安全措施？</summary>
+        <p>已启用定期<strong>自动备份</strong>，并接入<strong>防 DDoS 节点</strong>，尽力保障稳定与安全。</p>
+      </details>
+      <details>
+        <summary>延迟大概多少？</summary>
+        <p>多数地区可稳定在 <strong>&lt; 80ms</strong>，具体取决于你的本地网络与运营商。</p>
+      </details>
     </section>
+  </main>
+  <footer>
+    <p>© 2025 mineserver.site — 稳定运行 · 用心服务</p>
+  </footer>
 
-    <!-- 加入方式 -->
-    <section class="join-section" id="join">
-        <h2 class="section-title">如何加入我们</h2>
-        <div class="join-steps">
-            <div class="step">
-                <div class="step-number">1</div>
-                <h3>启动游戏</h3>
-                <p>确保你的Minecraft Java版已更新至1.20.1</p>
-            </div>
-            <div class="step">
-                <div class="step-number">2</div>
-                <h3>添加服务器</h3>
-                <p>在多人游戏中点击"添加服务器"</p>
-            </div>
-            <div class="step">
-                <div class="step-number">3</div>
-                <h3>输入地址</h3>
-                <p>在服务器地址栏输入: <strong>mineserver.site</strong></p>
-            </div>
-            <div class="step">
-                <div class="step-number">4</div>
-                <h3>开始游戏</h3>
-                <p>保存并加入服务器，开始你的冒险！</p>
-            </div>
-        </div>
-    </section>
+  <script>
+    // 全局变量
+    let musicPlaying = false; // 初始为未播放状态
+    const bgMusic = document.getElementById('bgMusic');
+    const musicBtn = document.getElementById('musicBtn');
+    const titleEgg = document.getElementById('titleEgg');
+    const eggTip = document.getElementById('eggTip');
+    let eggClickCount = 0;
 
-    <!-- 页脚 -->
-    <footer>
-        <div class="footer-content">
-            <div class="server-address">
-                <h3>服务器地址: <span>mineserver.site</span></h3>
-            </div>
-            <div class="footer-links">
-                <a href="#features">服务器特色</a>
-                <a href="#info">服务器信息</a>
-                <a href="#rules">服务器规则</a>
-                <a href="#join">加入我们</a>
-                <!-- 页脚中的 GitHub 链接 -->
-                <a href="https://github.com/bbgjk/bbgjk.github.io" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>
-            </div>
-            <div class="social-links">
-                <!-- 社交图标中的 GitHub 链接 -->
-                <a href="https://github.com/bbgjk/bbgjk.github.io" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
-                <a href="#"><i class="fab fa-discord"></i></a>
-                <a href="#"><i class="fab fa-qq"></i></a>
-                <a href="#"><i class="fab fa-weixin"></i></a>
-                <a href="#"><i class="fab fa-youtube"></i></a>
-            </div>
-            <div class="copyright">
-                <p>© 2025 矿工世界 Minecraft服务器 | 本服务器与Mojang AB没有关联</p>
-            </div>
-        </div>
-    </footer>
+    // 复制服务器地址功能
+    function copyAddr(){
+      const addr = document.getElementById('server-addr').textContent;
+      const btn = document.querySelector('.copy');
+      // 兼容剪贴板写入
+      navigator.clipboard.writeText(addr).then(()=>{
+        btn.classList.add('copied');
+        setTimeout(()=>btn.classList.remove('copied'),1500);
+      }).catch(err => {
+        // 降级方案：创建临时输入框复制
+        const input = document.createElement('input');
+        input.value = addr;
+        document.body.appendChild(input);
+        input.select();
+        document.execCommand('copy');
+        document.body.removeChild(input);
+        btn.classList.add('copied');
+        setTimeout(()=>btn.classList.remove('copied'),1500);
+        console.log('剪贴板权限不足，已使用降级方案复制');
+      });
+    }
 
-    <script>
-        // 添加方块动画效果
-        document.addEventListener('DOMContentLoaded', function() {
-            const blocks = document.querySelectorAll('.mc-block');
-            
-            blocks.forEach(block => {
-                // 随机动画延迟和持续时间
-                const delay = Math.random() * 5;
-                const duration = 3 + Math.random() * 2;
-                block.style.animation = `float ${duration}s ${delay}s infinite ease-in-out`;
-                
-                // 随机动画开始位置
-                const startY = Math.random() * 10 - 5;
-                block.style.transform = `translateY(${startY}px)`;
-            });
-            
-            // 创建CSS动画
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes float {
-                    0%, 100% { transform: translateY(0) rotate(0deg); }
-                    50% { transform: translateY(-20px) rotate(5deg); }
-                }
-            `;
-            document.head.appendChild(style);
-            
-            // 导航栏滚动效果
-            window.addEventListener('scroll', function() {
-                const header = document.querySelector('header');
-                if (window.scrollY > 100) {
-                    header.style.backgroundColor = 'rgba(70, 50, 31, 0.95)';
-                    header.style.padding = '0.5rem 2rem';
-                } else {
-                    header.style.backgroundColor = '';
-                    header.style.padding = '';
-                }
-            });
+    // 点击加入按钮统计（示例）
+    function trackJoin(){
+      console.log('[Join] Player clicked join button');
+      // 可扩展：接入百度统计/谷歌分析等
+    }
 
-            // 平滑滚动
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
+    // 修复后的背景音乐控制逻辑
+    function toggleMusic() {
+      if (musicPlaying) {
+        // 当前是播放状态 → 暂停
+        bgMusic.pause();
+        musicBtn.innerHTML = '🔇'; // 显示播放图标
+        musicPlaying = false;
+      } else {
+        // 当前是暂停状态 → 播放
+        bgMusic.play().then(() => {
+          // 播放成功：更新状态和图标
+          musicBtn.innerHTML = '🎵'; // 显示暂停图标
+          musicPlaying = true;
+        }).catch(err => {
+          // 播放失败（浏览器限制）
+          console.log('音频播放失败:', err);
+          eggTip.textContent = '需要手动交互播放音乐哦 🎶';
+          eggTip.classList.add('show');
+          setTimeout(() => eggTip.classList.remove('show'), 3000);
+          // 失败时不修改状态，避免图标错乱
+          musicPlaying = false;
+          musicBtn.innerHTML = '🔇';
         });
-    </script>
+      }
+    }
+
+    // 监听音频实际播放状态（兜底同步）
+    bgMusic.addEventListener('play', () => {
+      musicPlaying = true;
+      musicBtn.innerHTML = '🎵';
+    });
+    bgMusic.addEventListener('pause', () => {
+      musicPlaying = false;
+      musicBtn.innerHTML = '🔇';
+    });
+
+    // 标题彩蛋功能
+    function titleEggClick() {
+      eggClickCount++;
+      titleEgg.classList.add('clicked');
+      setTimeout(() => titleEgg.classList.remove('clicked'), 500);
+      
+      // 点击5次触发彩蛋
+      if (eggClickCount === 5) {
+        eggTip.textContent = '恭喜发现彩蛋！🎁 服务器专属福利：输入指令 /gift 领取';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 5000);
+        eggClickCount = 0; // 重置计数
+      } else if (eggClickCount === 1) {
+        // 第一次点击显示提示
+        eggTip.textContent = '继续点击有惊喜 🎮';
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 2000);
+      }
+    }
+
+    // 页面加载后执行初始化
+    window.addEventListener('load',()=>{
+      // 初始化延迟和在线人数
+      // 每 10 秒刷新在线人数（降低刷新频率，减少性能消耗）
+      setInterval(loadOnline,10000);
+      // 每 20 秒刷新延迟（避免高频请求）
+      setInterval(pingServer,20000);
+
+      // 绑定标题彩蛋点击事件
+      titleEgg.addEventListener('click', titleEggClick);
+
+      // 初始显示彩蛋提示
+      setTimeout(() => {
+        eggTip.classList.add('show');
+        setTimeout(() => eggTip.classList.remove('show'), 3000);
+      }, 1000);
+    });
+  </script>
+<script>
+// 配置
+const API = '46.3.221.67:49045/minecraft-status'; // 你的后端接口
+const onlineEl  = document.getElementById('online-count');
+const versionEl  = document.getElementById('version');
+const pingEl    = document.getElementById('ping');
+const tpsEl     = document.getElementById('tps');
+
+// 工具：显示错误状态
+function setOffline() {
+  onlineEl.textContent = '离线';
+  pingEl.textContent = '超时';
+  versionEl.textContent = '--';
+  tpsEl.textContent = '--';
+}
+
+// 拉取状态并渲染
+async function loadStatus() {
+  try {
+    const res = await fetch(API, { cache: 'no-store' });
+    if (!res.ok) throw new Error('接口异常');
+    const data = await res.json();
+
+    if (data.online) {
+      onlineEl.textContent = data.players.online;
+      versionEl.textContent = data.version || '--';
+      pingEl.textContent = data.roundTripLatency != null ? data.latency + ' ms' : '--';
+      // 若后端未提供 TPS，可保留静态值或隐藏该项
+      tpsEl.textContent = data.tps ?? '--';
+    } else {
+      setOffline();
+    }
+  } catch (err) {
+    console.error('获取服务器状态失败:', err);
+    setOffline();
+  }
+}
+
+// 页面加载与定时刷新
+window.addEventListener('load', () => {
+  loadStatus();                    // 立即加载一次
+  setInterval(loadStatus, 10000);   // 每 10 秒刷新
+});
+</script>
 </body>
 </html>
